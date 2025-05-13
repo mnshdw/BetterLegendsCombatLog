@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Combat Log Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .tactical-screen .new-log-container {
+            bottom: 0;
+            top: 0.3rem;
+            left: 0.3rem;
+            width: 52rem;
+            height: 15.1rem;
+            position: relative;
+            background-image: url("coui://gfx/ui/skin/tactical_character_background.png");
+            z-index: 1;
+        }
+
+        .tactical-screen .topbar-event-log-module .ui-control.list {
+            background-image: url("coui://gfx/ui/skin/combat_log_bottom.png");
+            background-size: 39.0rem 41.1rem;
+            background-repeat: no-repeat;
+        }
+
+        .tactical-screen .topbar-event-log-module .l-event-logs-container {
+            top: 0.0rem;
+            left: 1.0rem;
+            bottom: 0.0rem;
+            height: 13.0rem;
+            position: absolute;
+            margin: auto;
+        }
+
+        .tactical-screen .topbar-event-log-module .l-event-logs-container .entry {
+            margin-left: 1.0rem;
+            margin-right: 0.2rem;
+            font-weight: normal;
+            font-size: 1rem;
+            font-style: normal;
+            font-family: 'Roboto-Regular';
+        }
+
+        .blue-text {
+            color: #1e468f;
+        }
+
+        .red-text {
+            color: #8f1e1e;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        @font-face {
+            font-family: 'Roboto-Regular';
+            src: url('../../../../../../../../gfx/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf') format('truetype') !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tactical-screen">
+        <div class="new-log-container">
+            <div class="topbar-event-log-module">
+                <div class="l-event-logs-container">
+                    <div class="ui-control list">
+                        <div class="scroll-container">
+                            <div class="entry"><span class="blue-text">Breaky The Berserk</span> is confident due to an
+                                inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Astrid</span> is confident due to an inspiring
+                                speech</div>
+                            <div class="entry"><span class="blue-text">Leubovera the Melon Mugger</span> is confident
+                                due to an inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Thrak Talun Skulltaker</span> is confident due to
+                                an inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Meginhard the Pimp</span> is confident due to an
+                                inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Wichbert the Holy Avenger</span> is confident due
+                                to an inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Nahal the Belly Dancer</span> is confident due to
+                                an inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Verounica</span> is confident due to an inspiring
+                                speech</div>
+                            <div class="entry"><span class="blue-text">Jasminne</span> is confident due to an inspiring
+                                speech</div>
+                            <div class="entry"><span class="blue-text">Horenhef</span> is confident due to an inspiring
+                                speech</div>
+                            <div class="entry"><span class="blue-text">Bacius Dark Guard</span> is confident due to an
+                                inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Istros Arachnid</span> is confident due to an
+                                inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Akamas Fallen</span> is confident due to an
+                                inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Echive the Holy Avenger</span> is confident due
+                                to an inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Urmuk Ghul</span> is confident due to an
+                                inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Warak Na Borash Dark Wraith</span> is confident
+                                due to an inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Ufaris Fallen</span> is confident due to an
+                                inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Wamukota Student of McSmack</span> is confident
+                                due to an inspiring speech</div>
+                            <div class="entry"><span class="blue-text">Ty</span> was not paying attention to a speech
+                            </div>
+                            <div class="entry"><span class="red-text">Indebted</span> discovered!</div>
+                            <div class="entry"><span class="red-text">Indebted</span> discovered!</div>
+                            <div class="entry"><span class="red-text">Indebted</span> discovered!</div>
+                            <div class="entry"><span class="red-text">Vor Jotunn</span> discovered!</div>
+                            <div class="entry"><span class="red-text">Nomad Slinger</span> discovered!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            function scrollToBottom() {
+                var scrollContainer = $('.scroll-container');
+                scrollContainer.scrollTop(scrollContainer[0].scrollHeight);
+            }
+
+            window.addLog = function (text, type) {
+                var entry = $('<div class="entry">' + text + '</div>');
+                $('.scroll-container').append(entry);
+            };
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('coui://gfx/fonts/JetBrainsMono/JetBrainsMono[wght].ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Roboto-Regular';
+	src: url('coui://gfx/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Roboto-Italic';
+	src: url('coui://gfx/fonts/Roboto/Roboto-Italic-VariableFont_wdth,wght.ttf') format('truetype');
+}
+
+.tactical-screen .new-log-container {
+	bottom: 0;
+	top: 0.3rem;
+	left: 0.3rem;
+	width: 52rem;
+	height: 15.1rem;
+	position: relative;
+	background-image: url("coui://gfx/ui/skin/tactical_character_background.png");
+	z-index: 1;
+}
+
+.tactical-screen .topbar-event-log-module .ui-control.list {
+	background-image: url("coui://gfx/ui/skin/combat_log_bottom.png");
+	background-size: 39.0rem 41.1rem;
+	background-repeat: no-repeat;
+}
+
+.tactical-screen .topbar-event-log-module .l-event-logs-container {
+	top: 0.0rem;
+	left: 1.0rem;
+	bottom: 0.0rem;
+	height: 13.0rem;
+	position: absolute;
+	margin: auto;
+}
+
+.tactical-screen .topbar-event-log-module .l-event-logs-container .entry {
+	margin-left: 1.0rem;
+	margin-right: 0.2rem;
+	font-weight: normal;
+	font-size: 1.5rem;
+	font-style: normal;
+	font-family: 'Roboto-Regular';
+}

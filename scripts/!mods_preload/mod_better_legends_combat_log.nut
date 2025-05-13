@@ -30,6 +30,7 @@
 	});
 	page.addDivider("divider");
 
+	::include("mod_better_legends_combat_log/ui.nut");
 	::include("mod_better_legends_combat_log/scripts/ui/screens/tactical/tactical_screen.nut");
 
 }, ::Hooks.QueueBucket.Normal);

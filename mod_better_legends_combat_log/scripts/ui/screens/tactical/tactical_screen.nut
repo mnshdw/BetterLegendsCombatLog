@@ -1,11 +1,11 @@
 ::ModBetterLegendsCombatLog.HooksMod.hook("scripts/ui/screens/tactical/modules/topbar/tactical_screen_topbar_event_log", function(q) {
 	q.create = @(__original) function() {
-		::logInfo("Creating Event Log");
+		::logInfo("BLCL: create");
 		__original();
 	};
 
 	q.destroy = @(__original) function() {
-		::logInfo("Destroying Event Log");
+		::logInfo("BLCL: destroy");
 		__original();
 	};
 
@@ -13,9 +13,17 @@
 		// We want to control this ourselves
 	}
 
-	// logEx
-	// log
-	// clear
+	q.log = @(__original) function(_text) {
+		::logInfo("BLCL: log=" + _text);
+		m.JSHandle.asyncCall("log", _text);
+	}
 
+	q.logEx = @(__original) function(_text) {
+		::logInfo("BLCL: logEx=" + _text);
+		__original(_text);
+	}
+
+	// logEx
+	// clear
 
 });
