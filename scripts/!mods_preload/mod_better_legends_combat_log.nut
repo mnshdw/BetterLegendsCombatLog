@@ -1,0 +1,35 @@
+::ModBetterLegendsCombatLog <- {
+	ID = "mod_better_legends_combat_log",
+	Name = "Better Legends Combat Log",
+	Version = "1.0.1",
+	Enabled = true,
+};
+
+::ModBetterLegendsCombatLog.HooksMod <- ::Hooks.register(::ModBetterLegendsCombatLog.ID, ::ModBetterLegendsCombatLog.Version, ::ModBetterLegendsCombatLog.Name);
+
+::ModBetterLegendsCombatLog.HooksMod.require("mod_msu >= 1.2.7", "mod_modern_hooks >= 0.5.4");
+
+::ModBetterLegendsCombatLog.HooksMod.queue(">mod_msu", function() {
+	::ModBetterLegendsCombatLog.Mod <- ::MSU.Class.Mod(::ModBetterLegendsCombatLog.ID, ::ModBetterLegendsCombatLog.Version, ::ModBetterLegendsCombatLog.Name);
+
+	// Register with MSU so people know to update
+	::ModBetterLegendsCombatLog.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/mnshdw/BetterLegendsCombatLog");
+
+	::ModBetterLegendsCombatLog.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
+
+	// MSU config page
+	local page = ::ModBetterLegendsCombatLog.Mod.ModSettings.addPage("Better Legends Combat Log");
+	local settingEnabled = page.addBooleanSetting(
+		"Enabled",
+		true,
+		"Enabled",
+		"When enabled, the mod will try to improve the combat log in a variety of ways. If you encounter any issues, or want vanilla behaviour, just disable this."
+	);
+	settingEnabled.addCallback(function(_value) {
+		::ModBetterLegendsCombatLog.Enabled = _value;
+	});
+	page.addDivider("divider");
+
+	::include("mod_better_legends_combat_log/scripts/ui/screens/tactical/tactical_screen.nut");
+
+}, ::Hooks.QueueBucket.Normal);
