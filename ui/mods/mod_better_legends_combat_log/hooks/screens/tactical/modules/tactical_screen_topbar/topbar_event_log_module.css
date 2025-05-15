@@ -1,19 +1,9 @@
 @font-face {
-	font-family: 'JetBrains Mono';
-	src: url('coui://gfx/fonts/JetBrainsMono/JetBrainsMono[wght].ttf') format('truetype');
+	font-family: 'Fira Code';
+	src: url('coui://gfx/fonts/Fira_Code/FiraCode-Medium.ttf') format('truetype');
 }
 
-@font-face {
-	font-family: 'Roboto-Regular';
-	src: url('coui://gfx/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
-}
-
-@font-face {
-	font-family: 'Roboto-Italic';
-	src: url('coui://gfx/fonts/Roboto/Roboto-Italic-VariableFont_wdth,wght.ttf') format('truetype');
-}
-
-.tactical-screen .new-log-container {
+tactical-screen .new-log-container {
 	bottom: 0;
 	top: 0.3rem;
 	left: 0.3rem;
@@ -42,8 +32,8 @@
 .tactical-screen .topbar-event-log-module .l-event-logs-container .entry {
 	margin-left: 1.0rem;
 	margin-right: 0.2rem;
-	font-weight: normal;
-	font-size: 1.5rem;
-	font-style: normal;
-	font-family: 'Roboto-Regular';
+	font-weight: 500 !important;
+	font-size: 1.2rem !important;
+	font-style: normal !important;
+	font-family: 'Fira Code' !important;
 }
