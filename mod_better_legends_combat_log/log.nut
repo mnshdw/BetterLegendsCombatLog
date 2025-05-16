@@ -213,9 +213,6 @@
 					::logError(format("Invalid number of matches: expected 2 got %d", damage_matches.len()));
 					return null;
 				}
-				// ::logInfo("damage= " + damage_matches[1]);
-				// damage = ::ModBetterLegendsCombatLog.Log.padWith(damage_matches[1], 3, "&nbsp;");
-				// ::logInfo("damage= " + damage);
 
 				local colorized_part;
 				if (part == "body" || part == "head") {
@@ -228,7 +225,7 @@
 					colorized_part = ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorArmor, part);
 				}
 
-				return format("&nbsp;&nbsp; » %s → %s", damage_matches[1], colorized_part);
+				return format("&nbsp;&nbsp; » %s → %s %s", damage_matches[1], entity, colorized_part);
 			}
 		});
 
