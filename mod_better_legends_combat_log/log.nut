@@ -18,7 +18,7 @@
 			status = []
 		};
 
-		// Attack patterns (hit, miss, evade) with chance and roll
+		// Attack patterns with attack rolls and a target
 		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color] (Chance: 63, Rolled: 93)
 		this.addPattern({
 			category = "attacks",
@@ -47,8 +47,8 @@
 					return null;
 				}
 				local colorized_skill = sub_matches[1] == "hits"
-					? ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Hit, skill)
-					: ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Miss, skill)
+					? ::MSU.Text.color("#135213", skill)
+					: ::MSU.Text.color("#666666", skill)
 				local text = attacker + " [" + colorized_skill + "]";
 				if (::ModBetterLegendsCombatLog.ShowCombatRolls) {
 					local chance = sub_matches[3];
@@ -60,7 +60,8 @@
 			}
 		});
 
-		// Attack patterns without chance and roll
+		// Attack patterns without attack rolls, with or without a target
+		// Example: [color=#8f1e1e]Xenthalus The Dauntless[/color] uses Raise Undead
 		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color]
 		this.addPattern({
 			category = "attacks",
@@ -74,17 +75,16 @@
 				local attacker = matches[1];
 				local andPos = matches[2].find(" and ");
 				if (andPos == null) {
-					::logError("Invalid match: missing ' and ' in " + matches[2]);
-					return null;
+					return attacker + " [" + ::MSU.Text.color("#135213", matches[2]) + "]";
 				}
 				local skill = matches[2].slice(0, andPos);
 				local sub_text = matches[2].slice(andPos + 5);
 				local text = attacker;
 				if (sub_text.find("hits ") != null) {
-					text += " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Hit, skill) + "] ";
+					text += " [" + ::MSU.Text.color("#135213", skill) + "] ";
 					text += sub_text.slice(5);
 				} else if (sub_text.find("misses ") != null) {
-					text += " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Miss, skill) + "] ";
+					text += " [" + ::MSU.Text.color("#666666", skill) + "] ";
 					text += sub_text.slice(7);
 				} else {
 					::logError("Invalid match: missing 'hits' or 'misses' in " + sub_text);
@@ -175,7 +175,7 @@
 				}
 				local entity = matches[1];
 				local action = matches[2];
-				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Purple, action == "has died" ? "DIED" : "STRUCK DOWN") + "]";
+				return entity + " [" + ::MSU.Text.color("#8e44ad", action == "has died" ? "DIED" : "STRUCK DOWN") + "]";
 			}
 		});
 
@@ -190,7 +190,7 @@
 				local attacker = matches[1];
 				local action = matches[2];
 				local victim = matches[3];
-				return attacker + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Purple, action == "killed" ? "KILLED" : "STRUCK DOWN") + "] " + victim;
+				return attacker + " [" + ::MSU.Text.color("#8e44ad", action == "killed" ? "KILLED" : "STRUCK DOWN") + "] " + victim;
 			}
 		});
 
@@ -198,8 +198,12 @@
 			category = "morale",
 			regex = this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady|is confident)",
 			replace = function(matches) {
+				for (i, val in matches) {
+					::logInfo("matches[" + i + "] = " + val);
+				}
 				if (!::ModBetterLegendsCombatLog.ShowMoraleChanges) {
-					return "ModBetterLegendsCombatLog::SUPPRESS_OUTPUT";
+					logInfo("Suppressing output for morale changes");
+					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
 				}
 				if (matches.len() != 3) {
 					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
@@ -209,23 +213,23 @@
 				local text;
 				switch(matches[2]) {
 					case " is fleeing":
-						color = ::ModBetterLegendsCombatLog.Color.VeryNegativeValue;
+						color = "#d92e2e";
 						text = "FLEEING";
 						break;
 					case " is breaking":
-						color = ::ModBetterLegendsCombatLog.Color.NegativeValue;
+						color = "#8f1e1e";
 						text = "BREAKING";
 						break;
 					case " is wavering":
-						color = ::ModBetterLegendsCombatLog.Color.NegativeValue;
+						color = "#8f1e1e";
 						text = "WAVERING";
 						break;
-					case " 's morale is now steady":
-						color = ::ModBetterLegendsCombatLog.Color.PositiveValue;
+					case "'s morale is now steady":
+						color = "#135213";
 						text = "STEADY";
 						break;
 					case " is confident":
-						color = ::ModBetterLegendsCombatLog.Color.VeryPositiveValue;
+						color = "#32cd32";
 						text = "CONFIDENT";
 						break;
 					default:
@@ -362,12 +366,3 @@
 
 ::ModBetterLegendsCombatLog.Log.SuppressOutput <- "ModBetterLegendsCombatLog::SUPPRESS_OUTPUT";
 
-
-::ModBetterLegendsCombatLog.Color <- {};
-::ModBetterLegendsCombatLog.Color.Hit <- "#135213";
-::ModBetterLegendsCombatLog.Color.Miss <- "#666666";
-::ModBetterLegendsCombatLog.Color.Purple <- "#8e44ad";
-::ModBetterLegendsCombatLog.Color.VeryPositiveValue <- "#32cd32";
-::ModBetterLegendsCombatLog.Color.PositiveValue <- "#135213";
-::ModBetterLegendsCombatLog.Color.NegativeValue <- "#8f1e1e";
-::ModBetterLegendsCombatLog.Color.VeryNegativeValue <- "#d92e2e";
