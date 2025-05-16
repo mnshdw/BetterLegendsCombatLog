@@ -6,11 +6,19 @@
 	}
 
 	q.log = @(__original) function(_text) {
-		m.JSHandle.asyncCall("log", ModBetterLegendsCombatLog.Log.intercept(_text));
+		local new_text = ModBetterLegendsCombatLog.Log.intercept(_text);
+		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
+			return;
+		}
+		m.JSHandle.asyncCall("log", new_text);
 	}
 
 	q.logEx = @(__original) function(_text) {
-		__original(ModBetterLegendsCombatLog.Log.intercept(_text));
+		local new_text = ModBetterLegendsCombatLog.Log.intercept(_text);
+		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
+			return;
+		}
+		__original(ModBetterLegendsCombatLog.Log.intercept(new_text));
 	}
 
 	// clear
