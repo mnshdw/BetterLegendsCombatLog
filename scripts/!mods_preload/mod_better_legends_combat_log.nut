@@ -4,7 +4,7 @@
 	Version = "1.0.1",
 	Enabled = true,
 	ShowCombatRolls = true,
-	ShowMoraleChanges = false,
+	ShowMoraleChanges = true,
 };
 
 ::ModBetterLegendsCombatLog.HooksMod <- ::Hooks.register(::ModBetterLegendsCombatLog.ID, ::ModBetterLegendsCombatLog.Version, ::ModBetterLegendsCombatLog.Name);
