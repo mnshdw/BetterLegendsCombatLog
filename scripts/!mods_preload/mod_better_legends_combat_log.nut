@@ -3,6 +3,8 @@
 	Name = "Better Legends Combat Log",
 	Version = "1.0.1",
 	Enabled = true,
+	ShowCombatRolls = true,
+	ShowMoraleChanges = false,
 };
 
 ::ModBetterLegendsCombatLog.HooksMod <- ::Hooks.register(::ModBetterLegendsCombatLog.ID, ::ModBetterLegendsCombatLog.Version, ::ModBetterLegendsCombatLog.Name);
@@ -29,9 +31,29 @@
 		::ModBetterLegendsCombatLog.Enabled = _value;
 	});
 	page.addDivider("divider");
+	local settingShowCombatRolls = page.addBooleanSetting(
+		"ShowCombatRolls",
+		true,
+		"Show Combat Rolls",
+		"When enabled, the combat log will show the combat rolls for attacks."
+	);
+	settingShowCombatRolls.addCallback(function(_value) {
+		::ModBetterLegendsCombatLog.ShowCombatRolls = _value;
+	});
+	page.addDivider("divider");
+	local settingShowMoraleChanges = page.addBooleanSetting(
+		"ShowMoraleChanges",
+		true,
+		"Show Morale Changes",
+		"When enabled, the combat log will show morale changes for both allies and enemies."
+	);
+	settingShowMoraleChanges.addCallback(function(_value) {
+		::ModBetterLegendsCombatLog.ShowMoraleChanges = _value;
+	});
 
 	::include("mod_better_legends_combat_log/log.nut");
 	::include("mod_better_legends_combat_log/ui.nut");
+	::include("mod_better_legends_combat_log/hooks/ui/screens/tactical/modules/turn_sequence_bar.nut");
 	::include("mod_better_legends_combat_log/scripts/ui/screens/tactical/tactical_screen.nut");
 
 }, ::Hooks.QueueBucket.Normal);
