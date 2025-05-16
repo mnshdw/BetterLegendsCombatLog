@@ -16,18 +16,39 @@
 		};
 
 		// Attack patterns (hit, miss, evade)
+		// Regex:   this.entity + " uses ([\\s.]+) and (hits|misses) " + this.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"
+		// Matches: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color] (Chance: 63, Rolled: 93)
 		this.addPattern({
 			category = "attacks",
-			regex = this.entity + " uses ([\\s.]+) and (hits|misses) " + this.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)",
+			regex = this.entity + " uses (.*)",
+			sub_regex = regexp("(hits|misses) " + this.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
+			// regex = this.entity + " uses ([\\s.]+) and (hits|misses) " + this.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)",
 			replace = function(matches) {
+				if (matches.len() != 3) {
+					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
+					return null;
+				}
 				local attacker = matches[1];
-				local action = matches[3];
-				local skill = action == "hits" ? ::MSU.Text.colorGreen(matches[2]) : ::MSU.Text.colorRed(matches[2])
-				local target = matches[4];
-				local chance = matches[5];
-				local roll = matches[6];
-				local comp = roll <= chance ? "≤" : ">";
-				return attacker + " " + skill + " (" + roll + comp + chance + ") " + target;
+				local andPos = matches[2].find(" and ");
+				if (andPos == null) {
+					::logError("Invalid match: missing ' and ' in " + matches[2]);
+					return null;
+				}
+				local skill = matches[2].slice(0, andPos);
+				local sub_text = matches[2].slice(andPos + 5);
+				local sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(this.sub_regex, sub_text);
+				if (sub_matches.len() != 5) {
+					::logError(format("Invalid number of sub matches: expected 5 got %d", sub_matches.len()));
+					return null;
+				}
+				local colorized_skill = sub_matches[1] == "hits"
+					? ::MSU.Text.colorGreen(skill)
+					: ::MSU.Text.colorRed(skill)
+				local target = sub_matches[2];
+				local chance = sub_matches[3];
+				local roll = sub_matches[4];
+				local comp = roll.tointeger() <= chance.tointeger() ? "≤" : ">";
+				return attacker + " [" + colorized_skill + "] (" + roll + comp + chance + ") → " + target;
 			}
 		});
 
@@ -242,16 +263,8 @@
 		}
 
 		foreach (pattern in this.patternCategories[_category]) {
-			::logInfo("BLCL: text="+ _text + " pattern=" + pattern.regex);
-			local result = pattern.regexCompiled.capture(_text);
-			if (result) {
-				local matches = [];
-				foreach (i, val in result) {
-					local match = _text.slice(val.begin, val.end);
-					matches.push(match);
-					::logInfo("BLCL: match[" + i + "]=" + match);
-					// matches.push(_text.slice(val.begin, val.end));
-				}
+			local matches = ::ModBetterLegendsCombatLog.Log.matchRegex(pattern.regexCompiled, _text);
+			if (matches != null) {
 				return pattern.replace(matches);
 			}
 		}
@@ -282,6 +295,22 @@
 
 }
 
+::ModBetterLegendsCombatLog.Log.matchRegex <- function(_regex, _text) {
+	local result = _regex.capture(_text);
+	if (result) {
+		local matches = [];
+		foreach (i, val in result) {
+			matches.push(_text.slice(val.begin, val.end));
+		}
+		return matches;
+	}
+	return null;
+};
+
 ::ModBetterLegendsCombatLog.Log.addSuccessColor <- function (_text, _success) {
 	return _success ? ::MSU.Text.colorGreen(_text) : ::MSU.Text.colorRed(_text)
 }
+
+::ModBetterLegendsCombatLog.Log.logNextRound <- function(_turn) {
+	::Tactical.EventLog.logEx("\n===== ROUND " + _turn + "\n");
+};
