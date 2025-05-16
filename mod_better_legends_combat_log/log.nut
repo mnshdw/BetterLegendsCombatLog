@@ -24,25 +24,25 @@
 		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush
 		this.addPattern({
 			category = "attacks",
-			regex = this.m.entity + " uses (.*)",
+			regex = regexp(this.m.entity + " uses (.*)"),
 			sub_regex_with_target = regexp("(hits|misses) " + this.m.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
 			sub_regex_without_target = regexp("(hits|misses) " + this.m.entity),
-			replace = function(matches) {
-				if (matches.len() != 3) {
-					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
-					return null;
-				}
-				local attacker = matches[1];
-				local andPos = matches[2].find(" and ");
+			match = function(_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 3;
+			},
+			replace = function(_self, _text) {
+				local attacker = _self.matches[1];
+				local andPos = _self.matches[2].find(" and ");
 				if (andPos == null) {
-					::logError("Invalid match: missing ' and ' in " + matches[2]);
+					::logError("Invalid match: missing ' and ' in " + _self.matches[2]);
 					return null;
 				}
-				local skill = matches[2].slice(0, andPos);
-				local sub_text = matches[2].slice(andPos + 5);
-				local sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(this.sub_regex_with_target, sub_text);
+				local skill = _self.matches[2].slice(0, andPos);
+				local sub_text = _self.matches[2].slice(andPos + 5);
+				local sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(_self.sub_regex_with_target, sub_text);
 				if (sub_matches == null) {
-					sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(this.sub_regex_without_target, sub_text);
+					sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(_self.sub_regex_without_target, sub_text);
 				}
 				if (sub_matches == null) {
 					::logError(format("Invalid sub matches: '" + sub_text + "' did not match any regex"));
@@ -66,90 +66,19 @@
 			}
 		});
 
-		// this.addPattern({
-		// 	category = "attacks",
-		// 	regex = "^(.+) uses (.+) and the shot goes astray and hits (.+) \\(Chance: (\\d+), Rolled: (\\d+)\\)$",
-		// 	replace = function(matches) {
-		// 		local attacker = matches[1];
-		// 		local skill = ::MSU.Text.colorGreen(matches[2]);
-		// 		local target = matches[3];
-		// 		local chance = matches[4];
-		// 		local roll = matches[5];
-
-		// 		return attacker + " " + skill + "(» " + roll + "<" + chance + ") -> " + target;
-		// 	}
-		// });
-
-		// this.addPattern({
-		// 	category = "attacks",
-		// 	regex = "^(.+) uses (.+) and the shot goes astray and misses (.+) \\(Chance: (\\d+), Rolled: (\\d+)\\)$",
-		// 	replace = function(matches) {
-		// 		local attacker = matches[1];
-		// 		local skill = ::MSU.Text.colorRed(matches[2]);
-		// 		local target = matches[3];
-		// 		local chance = matches[4];
-		// 		local roll = matches[5];
-
-		// 		return attacker + " " + skill + "(» " + roll + ">" + chance + ") -!> " + target;
-		// 	}
-		// });
-
-		// this.addPattern({
-		// 	category = "attacks",
-		// 	regex = "^(.+) uses (.+) and the shot goes astray and hits (.+)$",
-		// 	replace = function(matches) {
-		// 		local attacker = matches[1];
-		// 		local skill = ::MSU.Text.colorGreen(matches[2]);
-		// 		local target = matches[3];
-
-		// 		return attacker + " " + skill + " » (Astray) " + target;
-		// 	}
-		// });
-
-		// this.addPattern({
-		// 	category = "attacks",
-		// 	regex = "^(.+) uses (.+) and (.+) evades the attack$",
-		// 	replace = function(matches) {
-		// 		local attacker = matches[1];
-		// 		local skill = ::MSU.Text.colorRed(matches[2]);
-		// 		local target = matches[3];
-
-		// 		return attacker + " " + skill + " » (Evaded) " + target;
-		// 	}
-		// });
-
-		// // Lucky/Unlucky patterns
-		// this.addPattern({
-		// 	category = "status",
-		// 	regex = "^(.+) got lucky\\.$",
-		// 	replace = function(matches) {
-		// 		local entity = matches[1];
-		// 		return entity + " » " + ::MSU.Text.colorGreen("Got Lucky") + " (rerolled defense)";
-		// 	}
-		// });
-
-		// this.addPattern({
-		// 	category = "status",
-		// 	regex = "^(.+) wasn\\'t lucky enough\\.$",
-		// 	replace = function(matches) {
-		// 		local entity = matches[1];
-		// 		return entity + " » " + ::MSU.Text.colorRed("Wasn't Lucky") + " (rerolled defense failed)";
-		// 	}
-		// });
-
 		// Death patterns with a target
 		// Example: [color=#8f1e1e]Xenthalus The Dauntless[/color] uses Raise Undead
 		this.addPattern({
 			category = "deaths",
-			regex = this.m.entity + " has (killed|struck down) " + this.m.entity,
-			replace = function(matches) {
-				if (matches.len() != 4) {
-					::logError(format("Invalid number of matches: expected 4 got %d", matches.len()));
-					return null;
-				}
-				local attacker = matches[1];
-				local action = matches[2];
-				local victim = matches[3];
+			regex = regexp(this.m.entity + " has (killed|struck down) " + this.m.entity),
+			match = function(_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 4;
+			},
+			replace = function(_self, _text) {
+				local attacker = _self.matches[1];
+				local action = _self.matches[2];
+				local victim = _self.matches[3];
 				return attacker + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorDeath, action == "killed" ? "KILLED" : "STRUCK DOWN") + "] " + victim;
 			}
 		});
@@ -158,36 +87,37 @@
 		// Example: [color=#8f1e1e]Xenthalus The Dauntless[/color] uses Raise Undead
 		this.addPattern({
 			category = "deaths",
-			regex = this.m.entity + " (has died|is struck down)",
-			replace = function(matches) {
-				if (matches.len() != 3) {
-					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
-					return null;
-				}
-				local entity = matches[1];
-				local action = matches[2];
+			regex = regexp(this.m.entity + " (has died|is struck down)"),
+			match = function(_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 3;
+			},
+			replace = function(_self, _text) {
+				local entity = _self.matches[1];
+				local action = _self.matches[2];
 				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorDeath, action == "has died" ? "DIED" : "STRUCK DOWN") + "]";
 			}
 		});
 
 		// Morale checks
+		// Example: [color=#8f1e1e]Xenthalus The Dauntless[/color] is breaking
+		// TODO Use:
+		// - gt.Const.MoraleStateName
+		// - gt.Const.MoraleStateEvent
 		this.addPattern({
 			category = "morale",
-			// TODO Use:
-			// - gt.Const.MoraleStateName
-			// - gt.Const.MoraleStateEvent
-			regex = this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady|is confident| has rallied)",
-			replace = function(matches) {
+			regex = regexp(this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady|is confident| has rallied)"),
+			match = function(_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 3;
+			},
+			replace = function(_self, _text) {
 				if (!::ModBetterLegendsCombatLog.ShowMoraleChanges) {
 					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
 				}
-				if (matches.len() != 3) {
-					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
-					return null;
-				}
 				local color;
 				local text;
-				switch(matches[2]) {
+				switch(_self.matches[2]) {
 					case " is fleeing":
 						color = ::ModBetterLegendsCombatLog.ColorVeryNegativeValue;
 						text = "Fleeing";
@@ -213,30 +143,96 @@
 						// so we can filter this one out and let the next log do the job.
 						return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
 					default:
-						::logError("Invalid match: " + matches[2]);
+						::logError("Invalid match: " + _self.matches[2]);
 						return null;
 				}
-				return matches[1] + " → [" + ::MSU.Text.color(color, text) + "]";
+				return _self.matches[1] + " → [" + ::MSU.Text.color(color, text) + "]";
 			}
 		});
 
-		// this.addPattern({
-		// 	category = "injuries",
-		// 	regex = "^(.+)'s (.+) is hit for \\[b\\](.+)\\[/b\\] damage and suffers (.+)!$",
-		// 	replace = function(matches) {
-		// 		local entity = matches[1];
-		// 		local bodyPart = matches[2];
-		// 		local damage = matches[3];
-		// 		local injury = matches[4];
-		// 		return entity + " » " + bodyPart + " hit for " + ::MSU.Text.colorRed(damage) + " + " + ::MSU.Text.colorRed(injury);
-		// 	}
-		// });
+		// Damage patterns
+		// Example: [color=#8f1e1e]Wiederganger[/color]'s Simple Mail Shirt on Linen Tunic Wrap is hit for [b]16[/b] damage and has been destroyed
+		// Example: [color=#8f1e1e]Wiederganger[/color]'s body is hit for [b]16[/b] damage
+		// Example: [color=#1e468f]Eingeliadis's Warden[/color]'s head is hit for [b]15[/b] damage
+		this.addPattern({
+			category = "damage",
+			hit_needle = " is hit for ",
+			part_needle = "'s ",
+			color_needle = "[/color]",
+			regex_damage = regexp("\\[b\\]([0-9]+)\\[/b\\] damage"),
+			match = function(_self, _text) {
+				return _text.find(_self.hit_needle) != null;
+			},
+			replace = function(_self, _text) {
+				local hitPos = _text.find(_self.hit_needle);
+				if (hitPos == null) {
+					::logError(format("Invalid match: missing '%s' in '%s'", _self.hit_needle, _text));
+					return null;
+				}
+
+				// Left side: [color=#8f1e1e]Wiederganger[/color]'s Simple Mail Shirt on Linen Tunic Wrap
+				local entity_and_part = _text.slice(0, hitPos);
+				local partPos = entity_and_part.find(_self.part_needle);
+				if (partPos == null) {
+					::logError(format("Invalid match: missing '%s' in '%s'", _self.part_needle, entity_and_part));
+					return null;
+				}
+				// We have to watch out for early matches of the `'s` needle, as it can be part of
+				// the entity name (eg. Eingeliadis's Warden). As an additional check we verify that
+				// the match ends with [/color], if not we continue until the next occurence(s).
+				local entity = entity_and_part.slice(0, partPos);
+				while (entity.find(_self.color_needle) == null) {
+					partPos = entity_and_part.find(_self.part_needle, partPos + 1);
+					if (partPos == null) {
+						::logError(format("Invalid match: missing '%s' in '%s'", _self.part_needle, entity_and_part));
+						return null;
+					}
+					entity = entity_and_part.slice(0, partPos);
+				}
+				local part = entity_and_part.slice(partPos + _self.part_needle.len());
+
+				// Right side: [b]16[/b] damage and has been destroyed
+				local damage = _text.slice(hitPos + _self.hit_needle.len());
+
+				// Has the item been destroyed?
+				local destroyedPos = damage.find(" and has been destroyed");
+				if (destroyedPos != null) {
+					damage = damage.slice(0, destroyedPos);
+				}
+
+				// Extract damage number from "[b]16[/b] damage"
+				local damage_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex_damage, damage);
+				if (damage_matches == null) {
+					::logError(format("Invalid match: '%s' did not match regex", damage));
+					return null;
+				}
+				if (damage_matches.len() != 2) {
+					::logError(format("Invalid number of matches: expected 2 got %d", damage_matches.len()));
+					return null;
+				}
+				// ::logInfo("damage= " + damage_matches[1]);
+				// damage = ::ModBetterLegendsCombatLog.Log.padWith(damage_matches[1], 3, "&nbsp;");
+				// ::logInfo("damage= " + damage);
+
+				local colorized_part;
+				if (part == "body" || part == "head") {
+					part = part.slice(0, 1).toupper() + part.slice(1);
+					colorized_part = ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHealth, part);
+				} else {
+					if (destroyedPos != null) {
+						part = "[s]" + part + "[/s]";
+					}
+					colorized_part = ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorArmor, part);
+				}
+
+				return format("&nbsp;&nbsp; » %s → %s", damage_matches[1], colorized_part);
+			}
+		});
 
 		::logInfo("Combat Log patterns initialized");
 	},
 
 	function addPattern(_pattern) {
-		_pattern.regexCompiled <- regexp(_pattern.regex);
 		this.patterns.push(_pattern);
 
 		if ("category" in _pattern && _pattern.category in this.patternCategories) {
@@ -267,7 +263,8 @@
 		return _text;
 	},
 
-	// Tries to guess which pattern category to check first based on text content
+	// Tries to guess which pattern category to check first based on text content.
+	// This avoids matching many regexes that are not relevant to the text.
 	function guessCategory(_text) {
 		if (_text.find(" uses ") != null) {
 			return "attacks";
@@ -295,9 +292,8 @@
 		}
 
 		foreach (pattern in this.patternCategories[_category]) {
-			local matches = ::ModBetterLegendsCombatLog.Log.matchRegex(pattern.regexCompiled, _text);
-			if (matches != null) {
-				return pattern.replace(matches);
+			if (pattern.match(pattern, _text)) {
+				return pattern.replace(pattern, _text);
 			}
 		}
 
@@ -320,6 +316,14 @@
 
 ::ModBetterLegendsCombatLog.Log.addSuccessColor <- function (_text, _success) {
 	return _success ? ::MSU.Text.colorGreen(_text) : ::MSU.Text.colorRed(_text)
+};
+
+::ModBetterLegendsCombatLog.Log.padWith <- function (_text, _length, _with) {
+	local padded = _text;
+	for (local i = 0; i < _length - _text.len(); i++) {
+		padded = _with + padded;
+	}
+	return padded;
 };
 
 ::ModBetterLegendsCombatLog.Log.logNextRound <- function(_turn) {
