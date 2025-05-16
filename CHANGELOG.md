@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.3] - 2025-05-16
+
+- Fix for skills with no target (eg. 'uses Shieldwall').
+
 ## [1.0.2] - 2025-05-16
 
 - Support for damage logs.
