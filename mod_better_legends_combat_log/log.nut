@@ -63,36 +63,36 @@
 		// Attack patterns without attack rolls, with or without a target
 		// Example: [color=#8f1e1e]Xenthalus The Dauntless[/color] uses Raise Undead
 		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color]
-		this.addPattern({
-			category = "attacks",
-			regex = this.m.entity + " uses (.*)",
-			sub_regex = regexp("(hits|misses) " + this.m.entity),
-			replace = function(matches) {
-				if (matches.len() != 3) {
-					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
-					return null;
-				}
-				local attacker = matches[1];
-				local andPos = matches[2].find(" and ");
-				if (andPos == null) {
-					return attacker + " [" + ::MSU.Text.color("#135213", matches[2]) + "]";
-				}
-				local skill = matches[2].slice(0, andPos);
-				local sub_text = matches[2].slice(andPos + 5);
-				local text = attacker;
-				if (sub_text.find("hits ") != null) {
-					text += " [" + ::MSU.Text.color("#135213", skill) + "] ";
-					text += sub_text.slice(5);
-				} else if (sub_text.find("misses ") != null) {
-					text += " [" + ::MSU.Text.color("#666666", skill) + "] ";
-					text += sub_text.slice(7);
-				} else {
-					::logError("Invalid match: missing 'hits' or 'misses' in " + sub_text);
-					return null;
-				}
-				return text;
-			}
-		});
+		// this.addPattern({
+		// 	category = "attacks",
+		// 	regex = this.m.entity + " uses (.*)",
+		// 	sub_regex = regexp("(hits|misses) " + this.m.entity),
+		// 	replace = function(matches) {
+		// 		if (matches.len() != 3) {
+		// 			::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
+		// 			return null;
+		// 		}
+		// 		local attacker = matches[1];
+		// 		local andPos = matches[2].find(" and ");
+		// 		if (andPos == null) {
+		// 			return attacker + " [" + ::MSU.Text.color("#135213", matches[2]) + "]";
+		// 		}
+		// 		local skill = matches[2].slice(0, andPos);
+		// 		local sub_text = matches[2].slice(andPos + 5);
+		// 		local text = attacker;
+		// 		if (sub_text.find("hits ") != null) {
+		// 			text += " [" + ::MSU.Text.color("#135213", skill) + "] ";
+		// 			text += sub_text.slice(5);
+		// 		} else if (sub_text.find("misses ") != null) {
+		// 			text += " [" + ::MSU.Text.color("#666666", skill) + "] ";
+		// 			text += sub_text.slice(7);
+		// 		} else {
+		// 			::logError("Invalid match: missing 'hits' or 'misses' in " + sub_text);
+		// 			return null;
+		// 		}
+		// 		return text;
+		// 	}
+		// });
 
 		// this.addPattern({
 		// 	category = "attacks",
@@ -319,30 +319,9 @@
 		}
 
 		return null;
-	},
-
-	function action(_entity, _targetEntity, _action, _roll, _roll_target) {
-		local success = _roll < _roll_target;
-		local action =
-			::Const.UI.getColorizedEntityName(_entity)
-			+ " "
-			+ success("[" + _action + "]", _roll < _roll_target)
-			+ " "
-			+ roll(_roll, _roll_target)
-			+ " "
-			+ (_targetEntity != null ? " " + ::Const.UI.getColorizedEntityName(_targetEntity) : "");
-		::Tactical.EventLog.logEx(action);
-	},
-
-	function success(_text, _success) {
-		return _success ? ::MSU.Text.colorGreen(_text) : ::MSU.Text.colorRed(_text)
-	},
-
-	function roll(_roll, _roll_target) {
-		return "» (" + _roll + " < " + ::Math.min(95, ::Math.max(5, _roll_target)) + ")";
 	}
 
-}
+};
 
 ::ModBetterLegendsCombatLog.Log.matchRegex <- function(_regex, _text) {
 	local result = _regex.capture(_text);
@@ -358,7 +337,7 @@
 
 ::ModBetterLegendsCombatLog.Log.addSuccessColor <- function (_text, _success) {
 	return _success ? ::MSU.Text.colorGreen(_text) : ::MSU.Text.colorRed(_text)
-}
+};
 
 ::ModBetterLegendsCombatLog.Log.logNextRound <- function(_turn) {
 	::Tactical.EventLog.logEx("\n===== ROUND " + _turn + "\n");

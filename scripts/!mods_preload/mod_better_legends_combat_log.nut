@@ -40,7 +40,6 @@
 	settingShowCombatRolls.addCallback(function(_value) {
 		::ModBetterLegendsCombatLog.ShowCombatRolls = _value;
 	});
-	page.addDivider("divider");
 	local settingShowMoraleChanges = page.addBooleanSetting(
 		"ShowMoraleChanges",
 		true,
