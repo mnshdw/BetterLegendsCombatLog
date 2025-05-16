@@ -63,36 +63,38 @@
 		// Attack patterns without attack rolls, with or without a target
 		// Example: [color=#8f1e1e]Xenthalus The Dauntless[/color] uses Raise Undead
 		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color]
-		// this.addPattern({
-		// 	category = "attacks",
-		// 	regex = this.m.entity + " uses (.*)",
-		// 	sub_regex = regexp("(hits|misses) " + this.m.entity),
-		// 	replace = function(matches) {
-		// 		if (matches.len() != 3) {
-		// 			::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
-		// 			return null;
-		// 		}
-		// 		local attacker = matches[1];
-		// 		local andPos = matches[2].find(" and ");
-		// 		if (andPos == null) {
-		// 			return attacker + " [" + ::MSU.Text.color("#135213", matches[2]) + "]";
-		// 		}
-		// 		local skill = matches[2].slice(0, andPos);
-		// 		local sub_text = matches[2].slice(andPos + 5);
-		// 		local text = attacker;
-		// 		if (sub_text.find("hits ") != null) {
-		// 			text += " [" + ::MSU.Text.color("#135213", skill) + "] ";
-		// 			text += sub_text.slice(5);
-		// 		} else if (sub_text.find("misses ") != null) {
-		// 			text += " [" + ::MSU.Text.color("#666666", skill) + "] ";
-		// 			text += sub_text.slice(7);
-		// 		} else {
-		// 			::logError("Invalid match: missing 'hits' or 'misses' in " + sub_text);
-		// 			return null;
-		// 		}
-		// 		return text;
-		// 	}
-		// });
+		// TODO: It might be possible to combine this with the previous pattern, but
+		//       at this stage I'm a bit burned out by Squirrel's broken regex engine...
+		this.addPattern({
+			category = "attacks",
+			regex = this.m.entity + " uses (.*)",
+			sub_regex = regexp("(hits|misses) " + this.m.entity),
+			replace = function(matches) {
+				if (matches.len() != 3) {
+					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
+					return null;
+				}
+				local attacker = matches[1];
+				local andPos = matches[2].find(" and ");
+				if (andPos == null) {
+					return attacker + " [" + ::MSU.Text.color("#135213", matches[2]) + "]";
+				}
+				local skill = matches[2].slice(0, andPos);
+				local sub_text = matches[2].slice(andPos + 5);
+				local text = attacker;
+				if (sub_text.find("hits ") != null) {
+					text += " [" + ::MSU.Text.color("#135213", skill) + "] ";
+					text += sub_text.slice(5);
+				} else if (sub_text.find("misses ") != null) {
+					text += " [" + ::MSU.Text.color("#666666", skill) + "] ";
+					text += sub_text.slice(7);
+				} else {
+					::logError("Invalid match: missing 'hits' or 'misses' in " + sub_text);
+					return null;
+				}
+				return text;
+			}
+		});
 
 		// this.addPattern({
 		// 	category = "attacks",
@@ -165,20 +167,8 @@
 		// 	}
 		// });
 
-		this.addPattern({
-			category = "deaths",
-			regex = this.m.entity + " (has died|is struck down)",
-			replace = function(matches) {
-				if (matches.len() != 3) {
-					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
-					return null;
-				}
-				local entity = matches[1];
-				local action = matches[2];
-				return entity + " [" + ::MSU.Text.color("#8e44ad", action == "has died" ? "DIED" : "STRUCK DOWN") + "]";
-			}
-		});
-
+		// Death patterns with a target
+		// Example: [color=#8f1e1e]Xenthalus The Dauntless[/color] uses Raise Undead
 		this.addPattern({
 			category = "deaths",
 			regex = this.m.entity + " has (killed|struck down) " + this.m.entity,
@@ -194,15 +184,28 @@
 			}
 		});
 
+		// Death patterns without a target
+		// Example: [color=#8f1e1e]Xenthalus The Dauntless[/color] uses Raise Undead
+		this.addPattern({
+			category = "deaths",
+			regex = this.m.entity + " (has died|is struck down)",
+			replace = function(matches) {
+				if (matches.len() != 3) {
+					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
+					return null;
+				}
+				local entity = matches[1];
+				local action = matches[2];
+				return entity + " [" + ::MSU.Text.color("#8e44ad", action == "has died" ? "DIED" : "STRUCK DOWN") + "]";
+			}
+		});
+
+		// Morale checks
 		this.addPattern({
 			category = "morale",
-			regex = this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady|is confident)",
+			regex = this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady|is confident| has rallied)",
 			replace = function(matches) {
-				for (i, val in matches) {
-					::logInfo("matches[" + i + "] = " + val);
-				}
 				if (!::ModBetterLegendsCombatLog.ShowMoraleChanges) {
-					logInfo("Suppressing output for morale changes");
 					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
 				}
 				if (matches.len() != 3) {
@@ -232,6 +235,10 @@
 						color = "#32cd32";
 						text = "CONFIDENT";
 						break;
+					case " has rallied":
+						// This is usually followed by the new state the entity is in,
+						// so we can filter this one out and let the next log do the job.
+						return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
 					default:
 						::logError("Invalid match: " + matches[2]);
 						return null;
@@ -251,6 +258,8 @@
 		// 		return entity + " » " + bodyPart + " hit for " + ::MSU.Text.colorRed(damage) + " + " + ::MSU.Text.colorRed(injury);
 		// 	}
 		// });
+
+		::logInfo("Combat Log patterns initialized");
 	},
 
 	function addPattern(_pattern) {
@@ -303,7 +312,7 @@
 			return "morale";
 		}
 		return null;
-	}
+	},
 
 	function matchPatterns(_text, _category) {
 		if (!(_category in this.patternCategories)) {
@@ -319,7 +328,7 @@
 		}
 
 		return null;
-	}
+	},
 
 };
 
