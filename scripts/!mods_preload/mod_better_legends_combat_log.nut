@@ -5,6 +5,13 @@
 	Enabled = true,
 	ShowCombatRolls = true,
 	ShowMoraleChanges = true,
+	ColorHit = "#135213",
+	ColorMiss = "#666666",
+	ColorDeath = "#8e44ad",
+	ColorVeryPositiveValue = "#32cd32",
+	ColorPositiveValue = "#135213",
+	ColorNegativeValue = "#8f1e1e",
+	ColorVeryNegativeValue = "#d92e2e"
 };
 
 ::ModBetterLegendsCombatLog.HooksMod <- ::Hooks.register(::ModBetterLegendsCombatLog.ID, ::ModBetterLegendsCombatLog.Version, ::ModBetterLegendsCombatLog.Name);

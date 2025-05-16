@@ -18,12 +18,15 @@
 			status = []
 		};
 
-		// Attack patterns with attack rolls and a target
+		// Attack patterns with and without attack rolls, with and without a target
 		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color] (Chance: 63, Rolled: 93)
+		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color]
+		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush
 		this.addPattern({
 			category = "attacks",
 			regex = this.m.entity + " uses (.*)",
-			sub_regex = regexp("(hits|misses) " + this.m.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
+			sub_regex_with_target = regexp("(hits|misses) " + this.m.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
+			sub_regex_without_target = regexp("(hits|misses) " + this.m.entity),
 			replace = function(matches) {
 				if (matches.len() != 3) {
 					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
@@ -37,62 +40,29 @@
 				}
 				local skill = matches[2].slice(0, andPos);
 				local sub_text = matches[2].slice(andPos + 5);
-				local sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(this.sub_regex, sub_text);
+				local sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(this.sub_regex_with_target, sub_text);
 				if (sub_matches == null) {
-					::logError(format("Invalid sub matches: '" + sub_text + "' did not match regex"));
+					sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(this.sub_regex_without_target, sub_text);
+				}
+				if (sub_matches == null) {
+					::logError(format("Invalid sub matches: '" + sub_text + "' did not match any regex"));
 					return null;
 				}
-				if (sub_matches.len() != 5) {
-					::logError(format("Invalid number of sub matches: expected 5 got %d", sub_matches.len()));
+				if (sub_matches.len() != 3 && sub_matches.len() != 5) {
+					::logError(format("Invalid number of sub matches: expected 3 or 5 got %d", sub_matches.len()));
 					return null;
 				}
 				local colorized_skill = sub_matches[1] == "hits"
-					? ::MSU.Text.color("#135213", skill)
-					: ::MSU.Text.color("#666666", skill)
+					? ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHit, skill)
+					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, skill)
 				local text = attacker + " [" + colorized_skill + "]";
-				if (::ModBetterLegendsCombatLog.ShowCombatRolls) {
+				if (::ModBetterLegendsCombatLog.ShowCombatRolls && sub_matches.len() == 5) {
 					local chance = sub_matches[3];
 					local roll = sub_matches[4];
 					local comp = roll.tointeger() <= chance.tointeger() ? "≤" : ">";
 					text += " (" + roll + comp + chance + ")";
 				}
 				return text + " → " + sub_matches[2];
-			}
-		});
-
-		// Attack patterns without attack rolls, with or without a target
-		// Example: [color=#8f1e1e]Xenthalus The Dauntless[/color] uses Raise Undead
-		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color]
-		// TODO: It might be possible to combine this with the previous pattern, but
-		//       at this stage I'm a bit burned out by Squirrel's broken regex engine...
-		this.addPattern({
-			category = "attacks",
-			regex = this.m.entity + " uses (.*)",
-			sub_regex = regexp("(hits|misses) " + this.m.entity),
-			replace = function(matches) {
-				if (matches.len() != 3) {
-					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
-					return null;
-				}
-				local attacker = matches[1];
-				local andPos = matches[2].find(" and ");
-				if (andPos == null) {
-					return attacker + " [" + ::MSU.Text.color("#135213", matches[2]) + "]";
-				}
-				local skill = matches[2].slice(0, andPos);
-				local sub_text = matches[2].slice(andPos + 5);
-				local text = attacker;
-				if (sub_text.find("hits ") != null) {
-					text += " [" + ::MSU.Text.color("#135213", skill) + "] ";
-					text += sub_text.slice(5);
-				} else if (sub_text.find("misses ") != null) {
-					text += " [" + ::MSU.Text.color("#666666", skill) + "] ";
-					text += sub_text.slice(7);
-				} else {
-					::logError("Invalid match: missing 'hits' or 'misses' in " + sub_text);
-					return null;
-				}
-				return text;
 			}
 		});
 
@@ -180,7 +150,7 @@
 				local attacker = matches[1];
 				local action = matches[2];
 				local victim = matches[3];
-				return attacker + " [" + ::MSU.Text.color("#8e44ad", action == "killed" ? "KILLED" : "STRUCK DOWN") + "] " + victim;
+				return attacker + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorDeath, action == "killed" ? "KILLED" : "STRUCK DOWN") + "] " + victim;
 			}
 		});
 
@@ -196,13 +166,16 @@
 				}
 				local entity = matches[1];
 				local action = matches[2];
-				return entity + " [" + ::MSU.Text.color("#8e44ad", action == "has died" ? "DIED" : "STRUCK DOWN") + "]";
+				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorDeath, action == "has died" ? "DIED" : "STRUCK DOWN") + "]";
 			}
 		});
 
 		// Morale checks
 		this.addPattern({
 			category = "morale",
+			// TODO Use:
+			// - gt.Const.MoraleStateName
+			// - gt.Const.MoraleStateEvent
 			regex = this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady|is confident| has rallied)",
 			replace = function(matches) {
 				if (!::ModBetterLegendsCombatLog.ShowMoraleChanges) {
@@ -216,24 +189,24 @@
 				local text;
 				switch(matches[2]) {
 					case " is fleeing":
-						color = "#d92e2e";
-						text = "FLEEING";
+						color = ::ModBetterLegendsCombatLog.ColorVeryNegativeValue;
+						text = "Fleeing";
 						break;
 					case " is breaking":
-						color = "#8f1e1e";
-						text = "BREAKING";
+						color = ::ModBetterLegendsCombatLog.ColorNegativeValue;
+						text = "Breaking";
 						break;
 					case " is wavering":
-						color = "#8f1e1e";
-						text = "WAVERING";
+						color = ::ModBetterLegendsCombatLog.ColorNegativeValue;
+						text = "Wavering";
 						break;
 					case "'s morale is now steady":
-						color = "#135213";
-						text = "STEADY";
+						color = ::ModBetterLegendsCombatLog.ColorPositiveValue;
+						text = "Steady";
 						break;
 					case " is confident":
-						color = "#32cd32";
-						text = "CONFIDENT";
+						color = ::ModBetterLegendsCombatLog.ColorVeryPositiveValue;
+						text = "Confident";
 						break;
 					case " has rallied":
 						// This is usually followed by the new state the entity is in,
@@ -308,7 +281,8 @@
 			|| _text.find(" is now steady") != null
 			|| _text.find(" is wavering") != null
 			|| _text.find(" is breaking") != null
-			|| _text.find(" is fleeing") != null) {
+			|| _text.find(" is fleeing") != null
+			|| _text.find(" has rallied") != null) {
 			return "morale";
 		}
 		return null;
@@ -353,4 +327,3 @@
 };
 
 ::ModBetterLegendsCombatLog.Log.SuppressOutput <- "ModBetterLegendsCombatLog::SUPPRESS_OUTPUT";
-
