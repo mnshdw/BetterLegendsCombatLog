@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.2] - 2025-05-16
+
+- Support for damage logs.
+- Added an option to show/hide the misses.
+
 ## [1.0.1] - 2025-05-16
 
 - Support for attack patterns with and without attack rolls, with and without a target.
