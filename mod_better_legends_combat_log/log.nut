@@ -52,6 +52,9 @@
 					::logError(format("Invalid number of sub matches: expected 3 or 5 got %d", sub_matches.len()));
 					return null;
 				}
+				if (sub_matches[1] == "misses" && !::ModBetterLegendsCombatLog.ShowMisses) {
+					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
+				}
 				local colorized_skill = sub_matches[1] == "hits"
 					? ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHit, skill)
 					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, skill)
@@ -106,7 +109,7 @@
 		// - gt.Const.MoraleStateEvent
 		this.addPattern({
 			category = "morale",
-			regex = regexp(this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady|is confident| has rallied)"),
+			regex = regexp(this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady| is confident| has rallied)"),
 			match = function(_self, _text) {
 				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
 				return _self.matches != null && _self.matches.len() == 3;

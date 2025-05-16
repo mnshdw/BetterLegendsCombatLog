@@ -5,6 +5,7 @@
 	Enabled = true,
 	ShowCombatRolls = true,
 	ShowMoraleChanges = true,
+	ShowMisses = true,
 	// Color for successful hits.
 	ColorHit = "#135213",
 	// Color for misses.
@@ -62,6 +63,15 @@
 	);
 	settingShowMoraleChanges.addCallback(function(_value) {
 		::ModBetterLegendsCombatLog.ShowMoraleChanges = _value;
+	});
+	local settingShowMisses = page.addBooleanSetting(
+		"ShowMisses",
+		true,
+		"Show Misses",
+		"When enabled, the combat log will show skills that miss their target(s)."
+	);
+	settingShowMoraleChanges.addCallback(function(_value) {
+		::ModBetterLegendsCombatLog.ShowMisses = _value;
 	});
 
 	::include("mod_better_legends_combat_log/log.nut");
