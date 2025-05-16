@@ -4,25 +4,26 @@
 	patterns = null,
 	patternCategories = null,
 
-	entity = "(\\[color=#[0-9a-f]+\\].+\\[/color\\])",
+	m = {
+		entity = "(\\[color=#[0-9a-f]+\\].+\\[/color\\])",
+	}
 
 	function init() {
 		this.patterns = [];
 		this.patternCategories = {
 			attacks = [],
-			injuries = [],
+			damage = [],
 			deaths = [],
+			morale = [],
 			status = []
 		};
 
-		// Attack patterns (hit, miss, evade)
-		// Regex:   this.entity + " uses ([\\s.]+) and (hits|misses) " + this.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"
-		// Matches: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color] (Chance: 63, Rolled: 93)
+		// Attack patterns (hit, miss, evade) with chance and roll
+		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color] (Chance: 63, Rolled: 93)
 		this.addPattern({
 			category = "attacks",
-			regex = this.entity + " uses (.*)",
-			sub_regex = regexp("(hits|misses) " + this.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
-			// regex = this.entity + " uses ([\\s.]+) and (hits|misses) " + this.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)",
+			regex = this.m.entity + " uses (.*)",
+			sub_regex = regexp("(hits|misses) " + this.m.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
 			replace = function(matches) {
 				if (matches.len() != 3) {
 					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
@@ -37,18 +38,59 @@
 				local skill = matches[2].slice(0, andPos);
 				local sub_text = matches[2].slice(andPos + 5);
 				local sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(this.sub_regex, sub_text);
+				if (sub_matches == null) {
+					::logError(format("Invalid sub matches: '" + sub_text + "' did not match regex"));
+					return null;
+				}
 				if (sub_matches.len() != 5) {
 					::logError(format("Invalid number of sub matches: expected 5 got %d", sub_matches.len()));
 					return null;
 				}
 				local colorized_skill = sub_matches[1] == "hits"
-					? ::MSU.Text.colorGreen(skill)
-					: ::MSU.Text.colorRed(skill)
-				local target = sub_matches[2];
-				local chance = sub_matches[3];
-				local roll = sub_matches[4];
-				local comp = roll.tointeger() <= chance.tointeger() ? "≤" : ">";
-				return attacker + " [" + colorized_skill + "] (" + roll + comp + chance + ") → " + target;
+					? ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Hit, skill)
+					: ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Miss, skill)
+				local text = attacker + " [" + colorized_skill + "]";
+				if (::ModBetterLegendsCombatLog.ShowCombatRolls) {
+					local chance = sub_matches[3];
+					local roll = sub_matches[4];
+					local comp = roll.tointeger() <= chance.tointeger() ? "≤" : ">";
+					text += " (" + roll + comp + chance + ")";
+				}
+				return text + " → " + sub_matches[2];
+			}
+		});
+
+		// Attack patterns without chance and roll
+		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color]
+		this.addPattern({
+			category = "attacks",
+			regex = this.m.entity + " uses (.*)",
+			sub_regex = regexp("(hits|misses) " + this.m.entity),
+			replace = function(matches) {
+				if (matches.len() != 3) {
+					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
+					return null;
+				}
+				local attacker = matches[1];
+				local andPos = matches[2].find(" and ");
+				if (andPos == null) {
+					::logError("Invalid match: missing ' and ' in " + matches[2]);
+					return null;
+				}
+				local skill = matches[2].slice(0, andPos);
+				local sub_text = matches[2].slice(andPos + 5);
+				local text = attacker;
+				if (sub_text.find("hits ") != null) {
+					text += " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Hit, skill) + "] ";
+					text += sub_text.slice(5);
+				} else if (sub_text.find("misses ") != null) {
+					text += " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Miss, skill) + "] ";
+					text += sub_text.slice(7);
+				} else {
+					::logError("Invalid match: missing 'hits' or 'misses' in " + sub_text);
+					return null;
+				}
+				return text;
 			}
 		});
 
@@ -94,18 +136,6 @@
 
 		// this.addPattern({
 		// 	category = "attacks",
-		// 	regex = "^(.+) uses (.+) and hits (.+)$",
-		// 	replace = function(matches) {
-		// 		local attacker = matches[1];
-		// 		local skill = ::MSU.Text.colorGreen(matches[2]);
-		// 		local target = matches[3];
-
-		// 		return attacker + " " + skill + " » " + target;
-		// 	}
-		// });
-
-		// this.addPattern({
-		// 	category = "attacks",
 		// 	regex = "^(.+) uses (.+) and (.+) evades the attack$",
 		// 	replace = function(matches) {
 		// 		local attacker = matches[1];
@@ -135,67 +165,76 @@
 		// 	}
 		// });
 
-		// // Kill and death patterns
-		// this.addPattern({
-		// 	category = "deaths",
-		// 	regex = "^(.+) has killed (.+)$",
-		// 	replace = function(matches) {
-		// 		local killer = matches[1];
-		// 		local victim = matches[2];
-		// 		return killer + " » " + ::MSU.Text.colorRed("KILLED") + " " + victim;
-		// 	}
-		// });
+		this.addPattern({
+			category = "deaths",
+			regex = this.m.entity + " (has died|is struck down)",
+			replace = function(matches) {
+				if (matches.len() != 3) {
+					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
+					return null;
+				}
+				local entity = matches[1];
+				local action = matches[2];
+				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Purple, action == "has died" ? "DIED" : "STRUCK DOWN") + "]";
+			}
+		});
 
-		// this.addPattern({
-		// 	category = "deaths",
-		// 	regex = "^(.+) has died$",
-		// 	replace = function(matches) {
-		// 		local entity = matches[1];
-		// 		return entity + " » " + ::MSU.Text.colorRed("DIED");
-		// 	}
-		// });
+		this.addPattern({
+			category = "deaths",
+			regex = this.m.entity + " has (killed|struck down) " + this.m.entity,
+			replace = function(matches) {
+				if (matches.len() != 4) {
+					::logError(format("Invalid number of matches: expected 4 got %d", matches.len()));
+					return null;
+				}
+				local attacker = matches[1];
+				local action = matches[2];
+				local victim = matches[3];
+				return attacker + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.Color.Purple, action == "killed" ? "KILLED" : "STRUCK DOWN") + "] " + victim;
+			}
+		});
 
-		// this.addPattern({
-		// 	category = "deaths",
-		// 	regex = "^(.+) has struck down (.+)$",
-		// 	replace = function(matches) {
-		// 		local attacker = matches[1];
-		// 		local victim = matches[2];
-		// 		return attacker + " » " + ::MSU.Text.colorRed("STRUCK DOWN") + " " + victim;
-		// 	}
-		// });
-
-		// this.addPattern({
-		// 	category = "deaths",
-		// 	regex = "^(.+) is struck down$",
-		// 	replace = function(matches) {
-		// 		local entity = matches[1];
-		// 		return entity + " » " + ::MSU.Text.colorRed("STRUCK DOWN");
-		// 	}
-		// });
-
-		// // Theriantrophy infection patterns
-		// this.addPattern({
-		// 	category = "status",
-		// 	regex = "^(.+) is infected with ([a-z]+)$",
-		// 	replace = function(matches) {
-		// 		local entity = matches[1];
-		// 		local infection = matches[2];
-		// 		return entity + " » " + ::MSU.Text.colorRed("INFECTED WITH " + infection.toupper());
-		// 	}
-		// });
-
-		// // Hit part and damage patterns - FIX for injury pattern
-		// this.addPattern({
-		// 	category = "injuries",
-		// 	regex = "^(.+)'s (.+) is hit for \\[b\\](.+)\\[/b\\] damage$",
-		// 	replace = function(matches) {
-		// 		local entity = matches[1];
-		// 		local bodyPart = matches[2];
-		// 		local damage = matches[3];
-		// 		return entity + " » " + bodyPart + " hit for " + ::MSU.Text.colorRed(damage);
-		// 	}
-		// });
+		this.addPattern({
+			category = "morale",
+			regex = this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady|is confident)",
+			replace = function(matches) {
+				if (!::ModBetterLegendsCombatLog.ShowMoraleChanges) {
+					return "ModBetterLegendsCombatLog::SUPPRESS_OUTPUT";
+				}
+				if (matches.len() != 3) {
+					::logError(format("Invalid number of matches: expected 3 got %d", matches.len()));
+					return null;
+				}
+				local color;
+				local text;
+				switch(matches[2]) {
+					case " is fleeing":
+						color = ::ModBetterLegendsCombatLog.Color.VeryNegativeValue;
+						text = "FLEEING";
+						break;
+					case " is breaking":
+						color = ::ModBetterLegendsCombatLog.Color.NegativeValue;
+						text = "BREAKING";
+						break;
+					case " is wavering":
+						color = ::ModBetterLegendsCombatLog.Color.NegativeValue;
+						text = "WAVERING";
+						break;
+					case " 's morale is now steady":
+						color = ::ModBetterLegendsCombatLog.Color.PositiveValue;
+						text = "STEADY";
+						break;
+					case " is confident":
+						color = ::ModBetterLegendsCombatLog.Color.VeryPositiveValue;
+						text = "CONFIDENT";
+						break;
+					default:
+						::logError("Invalid match: " + matches[2]);
+						return null;
+				}
+				return matches[1] + " → [" + ::MSU.Text.color(color, text) + "]";
+			}
+		});
 
 		// this.addPattern({
 		// 	category = "injuries",
@@ -247,14 +286,20 @@
 		if (_text.find(" uses ") != null) {
 			return "attacks";
 		} else if (_text.find(" is hit for ") != null) {
-			return "injuries";
-		} else if (_text.find(" killed ") != null || _text.find(" died") != null || _text.find(" struck down") != null) {
+			return "damage";
+		} else if (_text.find(" killed ") != null
+			|| _text.find(" died") != null
+			|| _text.find(" struck down") != null) {
 			return "deaths";
-		} else {
-			return null;
-			// return "status";
+		} else if (_text.find(" is confident") != null
+			|| _text.find(" is now steady") != null
+			|| _text.find(" is wavering") != null
+			|| _text.find(" is breaking") != null
+			|| _text.find(" is fleeing") != null) {
+			return "morale";
 		}
-	},
+		return null;
+	}
 
 	function matchPatterns(_text, _category) {
 		if (!(_category in this.patternCategories)) {
@@ -314,3 +359,15 @@
 ::ModBetterLegendsCombatLog.Log.logNextRound <- function(_turn) {
 	::Tactical.EventLog.logEx("\n===== ROUND " + _turn + "\n");
 };
+
+::ModBetterLegendsCombatLog.Log.SuppressOutput <- "ModBetterLegendsCombatLog::SUPPRESS_OUTPUT";
+
+
+::ModBetterLegendsCombatLog.Color <- {};
+::ModBetterLegendsCombatLog.Color.Hit <- "#135213";
+::ModBetterLegendsCombatLog.Color.Miss <- "#666666";
+::ModBetterLegendsCombatLog.Color.Purple <- "#8e44ad";
+::ModBetterLegendsCombatLog.Color.VeryPositiveValue <- "#32cd32";
+::ModBetterLegendsCombatLog.Color.PositiveValue <- "#135213";
+::ModBetterLegendsCombatLog.Color.NegativeValue <- "#8f1e1e";
+::ModBetterLegendsCombatLog.Color.VeryNegativeValue <- "#d92e2e";
