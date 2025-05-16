@@ -6,7 +6,7 @@
 	}
 
 	q.log = @(__original) function(_text) {
-		local new_text = ModBetterLegendsCombatLog.Log.intercept(_text);
+		local new_text = ::ModBetterLegendsCombatLog.Log.intercept(_text);
 		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
 			return;
 		}
@@ -14,7 +14,7 @@
 	}
 
 	q.logEx = @(__original) function(_text) {
-		local new_text = ModBetterLegendsCombatLog.Log.intercept(_text);
+		local new_text = ::ModBetterLegendsCombatLog.Log.intercept(_text);
 		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
 			return;
 		}
