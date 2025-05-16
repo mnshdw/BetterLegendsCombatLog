@@ -35,8 +35,7 @@
 				local attacker = _self.matches[1];
 				local andPos = _self.matches[2].find(" and ");
 				if (andPos == null) {
-					::logError("Invalid match: missing ' and ' in " + _self.matches[2]);
-					return null;
+					return attacker + " [" + _self.matches[2] + "]";
 				}
 				local skill = _self.matches[2].slice(0, andPos);
 				local sub_text = _self.matches[2].slice(andPos + 5);
