@@ -214,7 +214,8 @@
 				}
 
 				local colorized_part;
-				if (part == "body" || part == "head") {
+				if (part == "body" || part == "head" || part == "armor") {
+					// Capitalize the first letter of special parts
 					part = part.slice(0, 1).toupper() + part.slice(1);
 					colorized_part = ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHealth, part);
 				} else {
