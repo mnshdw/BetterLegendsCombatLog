@@ -229,6 +229,13 @@
 			}
 		});
 
+		// Status patterns
+		// Example: [color=#1e468f]Bandit Veteran[/color] battered [color=#1e468f]Billman[/color] leaving them baffled
+		// Example: [color=#1e468f]Bandit Veteran[/color] has stunned [color=#1e468f]Billman[/color] for one turn
+		// Example: [color=#1e468f]Brigand Raider[/color] feinted [color=#1e468f]Wardog[/color] leaving them exposed!
+		// Example: [color=#1e468f]Eingelias the Vala[/color] is poisoned
+		// TODO
+
 		::logInfo("Combat Log patterns initialized");
 	},
 
