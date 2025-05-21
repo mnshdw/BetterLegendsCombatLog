@@ -5,11 +5,19 @@
 	}
 
 	q.log_newline = @(__original) function() {
+		if (!::ModBetterLegendsTooltips.Enabled) {
+			__original();
+			return;
+		}
 		// We want to control this ourselves
 		// m.JSHandle.asyncCall("log", "\n");
 	}
 
 	q.log = @(__original) function(_text) {
+		if (!::ModBetterLegendsTooltips.Enabled) {
+			__original(_text);
+			return;
+		}
 		local new_text = ModBetterLegendsCombatLog.Log.intercept(_text);
 		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
 			return;
@@ -18,6 +26,10 @@
 	}
 
 	q.logEx = @(__original) function(_text) {
+		if (!::ModBetterLegendsTooltips.Enabled) {
+			__original(_text);
+			return;
+		}
 		local new_text = ModBetterLegendsCombatLog.Log.intercept(_text);
 		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
 			return;
