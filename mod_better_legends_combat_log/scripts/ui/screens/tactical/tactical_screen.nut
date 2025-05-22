@@ -5,16 +5,14 @@
 	}
 
 	q.log_newline = @(__original) function() {
-		if (!::ModBetterLegendsTooltips.Enabled) {
+		if (!::ModBetterLegendsCombatLog.Enabled) {
 			__original();
 			return;
 		}
-		// We want to control this ourselves
-		// m.JSHandle.asyncCall("log", "\n");
 	}
 
 	q.log = @(__original) function(_text) {
-		if (!::ModBetterLegendsTooltips.Enabled) {
+		if (!::ModBetterLegendsCombatLog.Enabled) {
 			__original(_text);
 			return;
 		}
@@ -26,7 +24,7 @@
 	}
 
 	q.logEx = @(__original) function(_text) {
-		if (!::ModBetterLegendsTooltips.Enabled) {
+		if (!::ModBetterLegendsCombatLog.Enabled) {
 			__original(_text);
 			return;
 		}
