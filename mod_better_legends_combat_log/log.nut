@@ -15,7 +15,8 @@
 			damage = [],
 			deaths = [],
 			morale = [],
-			status = []
+			status = [],
+			rooted = [],
 		};
 
 		// Attack patterns with and without attack rolls, with and without a target
@@ -236,6 +237,40 @@
 		// Example: [color=#1e468f]Eingelias the Vala[/color] is poisoned
 		// TODO
 
+		// Rooted patterns
+		// Example: [color=#1e468f]Bandit Veteran[/color] effortlessly breaks free (Chance: 99, Rolled: 1)
+		// Example: [color=#1e468f]Brigand Raider[/color] breaks free (Chance: 99, Rolled: 1)
+		// Example: [color=#1e468f]Brigand Raider[/color] fails to break free (Chance: 99, Rolled: 100)
+		this.addPattern({
+			category = "rooted",
+			regex = regexp(this.m.entity + " (effortlessly breaks free|breaks free|fails to break free) \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
+			match = function(_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				for (local i = 0; i < _self.matches.len(); i++) {
+					::logInfo(format("Match %d: %s", i, _self.matches[i]));
+				}
+				return _self.matches != null && _self.matches.len() == 5;
+			},
+			replace = function(_self, _text) {
+				local entity = _self.matches[1];
+				local action = _self.matches[2];
+				if (action == "fails to break free" && !::ModBetterLegendsCombatLog.ShowMisses) {
+					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
+				}
+				local colorized_action = action != "fails to break free"
+					? ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHit, "Break Free")
+					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, "Break Free")
+				local text = entity + " [" + colorized_action + "]";
+				if (::ModBetterLegendsCombatLog.ShowCombatRolls) {
+					local chance = _self.matches[3];
+					local roll = _self.matches[4];
+					local comp = roll.tointeger() <= chance.tointeger() ? "≤" : ">";
+					text += " (" + roll + comp + chance + ")";
+				}
+				return text;
+			}
+		});
+
 		::logInfo("Combat Log patterns initialized");
 	},
 
@@ -288,6 +323,9 @@
 			|| _text.find(" is fleeing") != null
 			|| _text.find(" has rallied") != null) {
 			return "morale";
+		} else if (_text.find(" break free") != null
+			|| _text.find(" breaks free") != null) {
+			return "rooted";
 		}
 		return null;
 	},
