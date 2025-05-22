@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.4] - 2025-05-22
+
+- Fix `Enabled` option in the settings not working properly.
+- Support for Break Free action from nets/vines.
+- Minor typos.
+
 ## [1.0.3] - 2025-05-16
 
 - Fix for skills with no target (eg. 'uses Shieldwall').
