@@ -245,6 +245,7 @@
 			category = "rooted",
 			regex = regexp(this.m.entity + " (effortlessly breaks free|breaks free|fails to break free) \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
 			match = function(_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
 				return _self.matches != null && _self.matches.len() == 5;
 			},
 			replace = function(_self, _text) {
