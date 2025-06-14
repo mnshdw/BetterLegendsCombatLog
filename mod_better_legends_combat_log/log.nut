@@ -22,12 +22,14 @@
 		// Attack patterns with and without attack rolls, with and without a target
 		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color] (Chance: 63, Rolled: 93)
 		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and misses [color=#1e468f]Manhunter Veteran Handgonner[/color]
+		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush and [color=#1e468f]Manhunter Veteran Handgonner[/color] evades the attack
 		// Example: [color=#8f1e1e]Haust Jotunn[/color] uses Horn Rush
 		this.addPattern({
 			category = "attacks",
 			regex = regexp(this.m.entity + " uses (.*)"),
-			sub_regex_with_target = regexp("(hits|misses) " + this.m.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
-			sub_regex_without_target = regexp("(hits|misses) " + this.m.entity),
+			sub_regex_with_rolls = regexp("(hits|misses) " + this.m.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
+			sub_regex_without_rolls = regexp("(hits|misses) " + this.m.entity),
+			sub_regex_with_evade = regexp("(hits|misses) " + this.m.entity + " evades the attack"),
 			match = function(_self, _text) {
 				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
 				return _self.matches != null && _self.matches.len() == 3;
@@ -40,9 +42,14 @@
 				}
 				local skill = _self.matches[2].slice(0, andPos);
 				local sub_text = _self.matches[2].slice(andPos + 5);
-				local sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(_self.sub_regex_with_target, sub_text);
+				local evade = false;
+				local sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(_self.sub_regex_with_rolls, sub_text);
 				if (sub_matches == null) {
-					sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(_self.sub_regex_without_target, sub_text);
+					sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(_self.sub_regex_without_rolls, sub_text);
+				}
+				if (sub_matches == null) {
+					sub_matches = ::ModBetterLegendsCombatLog.Log.matchRegex(_self.sub_regex_with_evade, sub_text);
+					evade = sub_matches != null;
 				}
 				if (sub_matches == null) {
 					::logError(format("Invalid sub matches: '" + sub_text + "' did not match any regex"));
@@ -52,7 +59,7 @@
 					::logError(format("Invalid number of sub matches: expected 3 or 5 got %d", sub_matches.len()));
 					return null;
 				}
-				if (sub_matches[1] == "misses" && !::ModBetterLegendsCombatLog.ShowMisses) {
+				if ((sub_matches[1] == "misses" || evade) && !::ModBetterLegendsCombatLog.ShowMisses) {
 					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
 				}
 				local colorized_skill = sub_matches[1] == "hits"
@@ -64,6 +71,8 @@
 					local roll = sub_matches[4];
 					local comp = roll.tointeger() <= chance.tointeger() ? "≤" : ">";
 					text += " (" + roll + comp + chance + ")";
+				} else if (evade) {
+					text += " (Evade)";
 				}
 				return text + " → " + sub_matches[2];
 			}
