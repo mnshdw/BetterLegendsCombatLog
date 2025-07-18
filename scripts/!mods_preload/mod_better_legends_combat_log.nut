@@ -22,6 +22,28 @@
 	ColorHealth = "#900c3f"
 };
 
+// Converts from "19,82,19,1.0" to "#135213"
+::ModBetterLegendsCombatLog.ToHex <- function(_color) {
+	local arr = split(_color, ",");
+	local r = format("%02x", arr[0].tointeger());
+	local g = format("%02x", arr[1].tointeger());
+	local b = format("%02x", arr[2].tointeger());
+	return "#" + r + g + b;
+}
+
+// Converts from "#135213" to "19,82,19,1.0"
+::ModBetterLegendsCombatLog.ToRgba <- function(_hex) {
+	// Simple lookup table for hex digits using strings
+	local hexMap = {
+		"0": 0, "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9,
+		"a": 10, "b": 11, "c": 12, "d": 13, "e": 14, "f": 15,
+	};
+	local r = hexMap[_hex.slice(1, 2)] * 16 + hexMap[_hex.slice(2, 3)];
+	local g = hexMap[_hex.slice(3, 4)] * 16 + hexMap[_hex.slice(4, 5)];
+	local b = hexMap[_hex.slice(5, 6)] * 16 + hexMap[_hex.slice(6, 7)];
+	return format("%d,%d,%d,1.0", r, g, b);
+}
+
 ::ModBetterLegendsCombatLog.HooksMod <- ::Hooks.register(::ModBetterLegendsCombatLog.ID, ::ModBetterLegendsCombatLog.Version, ::ModBetterLegendsCombatLog.Name);
 
 ::ModBetterLegendsCombatLog.HooksMod.require("mod_msu >= 1.2.7", "mod_modern_hooks >= 0.5.4");
@@ -45,7 +67,8 @@
 	settingEnabled.addCallback(function(_value) {
 		::ModBetterLegendsCombatLog.Enabled = _value;
 	});
-	page.addDivider("divider");
+
+	page.addDivider("1");
 	local settingShowCombatRolls = page.addBooleanSetting(
 		"ShowCombatRolls",
 		true,
@@ -73,6 +96,38 @@
 	settingShowMoraleChanges.addCallback(function(_value) {
 		::ModBetterLegendsCombatLog.ShowMisses = _value;
 	});
+
+	page.addDivider("2");
+	local colorCallback = function(_color) {
+		::ModBetterLegendsCombatLog[this.getID()] = ::ModBetterLegendsCombatLog.ToHex(_color);
+	}
+	local colorHitRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorHit);
+	local colorHitSetting = page.addColorPickerSetting("ColorHit", colorHitRgba, "Color for successful hits");
+	colorHitSetting.addCallback(colorCallback);
+	local colorMissRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorMiss);
+	local colorMissSetting = page.addColorPickerSetting("ColorMiss", colorMissRgba, "Color for misses");
+	colorMissSetting.addCallback(colorCallback);
+	local colorDeathRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorDeath);
+	local colorDeathSetting = page.addColorPickerSetting("ColorDeath", colorDeathRgba, "Color for deaths and struck downs");
+	colorDeathSetting.addCallback(colorCallback);
+	local colorVeryPositiveValueRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorVeryPositiveValue);
+	local colorVeryPositiveValueSetting = page.addColorPickerSetting("ColorVeryPositiveValue", colorVeryPositiveValueRgba, "Color for Confident morale");
+	colorVeryPositiveValueSetting.addCallback(colorCallback);
+	local colorPositiveValueRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorPositiveValue);
+	local colorPositiveValueSetting = page.addColorPickerSetting("ColorPositiveValue", colorPositiveValueRgba, "Color for Steady morale");
+	colorPositiveValueSetting.addCallback(colorCallback);
+	local colorNegativeValueRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorNegativeValue);
+	local colorNegativeValueSetting = page.addColorPickerSetting("ColorNegativeValue", colorNegativeValueRgba, "Color for Wavering / Breaking morale");
+	colorNegativeValueSetting.addCallback(colorCallback);
+	local colorVeryNegativeValueRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorVeryNegativeValue);
+	local colorVeryNegativeValueSetting = page.addColorPickerSetting("ColorVeryNegativeValue", colorVeryNegativeValueRgba, "Color for Fleeing morale");
+	colorVeryNegativeValueSetting.addCallback(colorCallback);
+	local colorArmorRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorArmor);
+	local colorArmorSetting = page.addColorPickerSetting("ColorArmor", colorArmorRgba, "Color for hits to armor");
+	colorArmorSetting.addCallback(colorCallback);
+	local colorHealthRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorHealth);
+	local colorHealthSetting = page.addColorPickerSetting("ColorHealth", colorHealthRgba, "Color for hits to the body/head");
+	colorHealthSetting.addCallback(colorCallback);
 
 	::include("mod_better_legends_combat_log/log.nut");
 	::include("mod_better_legends_combat_log/ui.nut");
