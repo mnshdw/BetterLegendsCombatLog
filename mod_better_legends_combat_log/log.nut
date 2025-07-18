@@ -32,7 +32,7 @@
 			sub_regexes = [
 				regexp("(hits|misses) " + this.m.entity + " \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
 				regexp("(hits|misses) " + this.m.entity),
-				regexp("(hits|misses) " + this.m.entity + " evades the attack")
+				regexp(this.m.entity + " evades the attack")
 			],
 			match = function(_self, _text) {
 				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
@@ -59,8 +59,8 @@
 					::logError(format("Invalid sub matches: '%s' did not match any regex", sub_text));
 					return null;
 				}
-				if (sub_matches.len() != 3 && sub_matches.len() != 5) {
-					::logError(format("Invalid number of sub matches: expected 3 or 5 got %d", sub_matches.len()));
+				if (sub_matches.len() != 2 && sub_matches.len() != 3 && sub_matches.len() != 5) {
+					::logError(format("Invalid number of sub matches: expected 2, 3 or 5 got %d", sub_matches.len()));
 					return null;
 				}
 				if ((sub_matches[1] == "misses") && !::ModBetterLegendsCombatLog.ShowMisses) {
@@ -78,7 +78,8 @@
 				} else if (index == 2) {
 					text += " (Evade)";
 				}
-				return text + " → " + sub_matches[2];
+				local target = sub_matches.len() > 2 ? sub_matches[2] : sub_matches[1];
+				return text + " → " + target;
 			}
 		});
 
@@ -247,7 +248,6 @@
 		// Example: [color=#1e468f]Bandit Veteran[/color] battered [color=#1e468f]Billman[/color] leaving them baffled
 		// Example: [color=#1e468f]Bandit Veteran[/color] has stunned [color=#1e468f]Billman[/color] for one turn
 		// Example: [color=#1e468f]Brigand Raider[/color] feinted [color=#1e468f]Wardog[/color] leaving them exposed!
-		// Example: [color=#1e468f]Eingelias the Vala[/color] is poisoned
 		// TODO
 
 		// Rooted patterns
@@ -280,6 +280,10 @@
 				return text;
 			}
 		});
+
+		// Special patterns
+		// TODO: [color=#1e468f]Eingelias the Vala[/color] is poisoned
+		// TODO: [color=#1e468f]Goblin Skirmisher[/color] tumbles away from danger
 
 		::logInfo("Combat Log patterns initialized");
 	},
