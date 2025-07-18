@@ -22,11 +22,20 @@ Here is an example with all options turned off:
 
 ![Screenshot_20250516_223418](https://github.com/user-attachments/assets/28167ee7-7d9a-4699-87d3-ec14e773e451)
 
+**Customizable colors**
+
+All colors used in the combat log can be customized in the mod settings. The following colors can be changed:
+
+- Colors for hits and misses
+- Colors for hits to armor and body/head
+- Colors for all morale changes
+
 **Planned features**
 
-- Show/hide ally/enemy actions
-- Group damage reports into a single line
-- Customize text effect colors, font size, font family
-- Customize combat log width and height
-- Show additional information that factored in the damage dealt or received
-- Show additional procs and effects (eg. RotU's Fallen free 3rd attack)
+- [ ] Show/hide ally/enemy actions
+- [ ] Group damage reports into a single line
+- [x] Customize text colors
+- [ ] Customize font size and font family
+- [ ] Customize combat log width and height
+- [ ] Show additional information that factored in the damage dealt or received
+- [ ] Show additional procs and effects (eg. RotU's Fallen free 3rd attack)
