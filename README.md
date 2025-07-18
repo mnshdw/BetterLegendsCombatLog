@@ -30,6 +30,8 @@ All colors used in the combat log can be customized in the mod settings. The fol
 - Colors for hits to armor and body/head
 - Colors for all morale changes
 
+<img width="727" height="548" alt="Screenshot_20250718_234757" src="https://github.com/user-attachments/assets/e88cff31-70da-4899-8f3e-4f485b5136e6" />
+
 **Planned features**
 
 - [ ] Show/hide ally/enemy actions
