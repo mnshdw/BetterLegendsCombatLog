@@ -12,7 +12,7 @@
 	ColorMiss = "#666666",
 	// Color for deaths and struck downs.
 	ColorDeath = "#8e44ad",
-	ColorVeryPositiveValue = "#32cd32",
+	ColorVeryPositiveValue = "#033303",
 	ColorPositiveValue = "#135213",
 	ColorNegativeValue = "#8f1e1e",
 	ColorVeryNegativeValue = "#d92e2e",
