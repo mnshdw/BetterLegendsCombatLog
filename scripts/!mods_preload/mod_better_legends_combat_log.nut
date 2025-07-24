@@ -3,7 +3,7 @@
 	Name = "Better Legends Combat Log",
 	Version = "1.0.6",
 	Enabled = true,
-	ShowCombatRolls = true,
+	CombatRollsStyle = "Compact",
 	ShowMoraleChanges = true,
 	ShowMisses = true,
 	// Color for successful hits.
@@ -69,14 +69,15 @@
 	});
 
 	page.addDivider("1");
-	local settingShowCombatRolls = page.addBooleanSetting(
-		"ShowCombatRolls",
-		true,
-		"Show Combat Rolls",
-		"When enabled, the combat log will show the combat rolls for attacks."
+	local settingCombatRollsStyle = page.addEnumSetting(
+		"CombatRollsStyle",
+		"Compact",
+		["Compact", "Vanilla", "Disabled"],
+		"Combat rolls style",
+		"Changes the style of combat rolls shown in the battle log.\n\nCompact: x<y\nVanilla: Chance: x, Rolled: y\nDisabled: combat rolls will not be shown"
 	);
-	settingShowCombatRolls.addCallback(function(_value) {
-		::ModBetterLegendsCombatLog.ShowCombatRolls = _value;
+	settingCombatRollsStyle.addCallback(function(_value) {
+		::ModBetterLegendsCombatLog.CombatRollsStyle = _value;
 	});
 	local settingShowMoraleChanges = page.addBooleanSetting(
 		"ShowMoraleChanges",

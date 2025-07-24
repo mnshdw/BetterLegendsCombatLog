@@ -70,11 +70,10 @@
 					? ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHit, skill)
 					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, skill)
 				local text = attacker + " [" + colorized_skill + "]";
-				if (::ModBetterLegendsCombatLog.ShowCombatRolls && sub_matches.len() == 5) {
+				if (::ModBetterLegendsCombatLog.CombatRollsStyle != "Disabled" && sub_matches.len() == 5) {
 					local chance = sub_matches[3];
 					local roll = sub_matches[4];
-					local comp = roll.tointeger() <= chance.tointeger() ? "≤" : ">";
-					text += " (" + roll + comp + chance + ")";
+					text += ::ModBetterLegendsCombatLog.Log.formatCombatRoll(roll, chance);
 				} else if (index == 2) {
 					text += " (Evade)";
 				}
@@ -271,11 +270,10 @@
 					? ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHit, "Break Free")
 					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, "Break Free")
 				local text = entity + " [" + colorized_action + "]";
-				if (::ModBetterLegendsCombatLog.ShowCombatRolls) {
+				if (::ModBetterLegendsCombatLog.CombatRollsStyle != "Disabled") {
 					local chance = _self.matches[3];
 					local roll = _self.matches[4];
-					local comp = roll.tointeger() <= chance.tointeger() ? "≤" : ">";
-					text += " (" + roll + comp + chance + ")";
+					text += ::ModBetterLegendsCombatLog.Log.formatCombatRoll(roll, chance);
 				}
 				return text;
 			}
@@ -359,6 +357,25 @@
 		return null;
 	},
 
+	function formatCombatRoll(_roll, _chance) {
+
+	}
+
+};
+
+::ModBetterLegendsCombatLog.Log.formatCombatRoll <- function(_roll, _chance) {
+	switch (::ModBetterLegendsCombatLog.CombatRollsStyle) {
+		case "Compact":
+			local comp = _roll.tointeger() <= _chance.tointeger() ? "≤" : ">";
+			return " (" + _roll + "<" + _chance + ")";
+		case "Vanilla":
+			return " (Chance: " + _chance + ", Rolled: " + _roll + ")";
+		case "Disabled":
+			return "";
+		default:
+			::logError(format("Unspported CombatRollsStyle: %s", ::ModBetterLegendsCombatLog.CombatRollsStyle));
+			return "";
+	}
 };
 
 ::ModBetterLegendsCombatLog.Log.matchRegex <- function(_regex, _text) {
