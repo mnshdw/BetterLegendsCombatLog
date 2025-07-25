@@ -1,7 +1,7 @@
 ::ModBetterLegendsCombatLog <- {
 	ID = "mod_better_legends_combat_log",
 	Name = "Better Legends Combat Log",
-	Version = "1.0.6",
+	Version = "1.0.7",
 	Enabled = true,
 	CombatRollsStyle = "Compact",
 	ShowMoraleChanges = true,
