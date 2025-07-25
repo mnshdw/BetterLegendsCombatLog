@@ -1,39 +1,58 @@
 @font-face {
-	font-family: 'Fira Code';
-	src: url('coui://gfx/fonts/Fira_Code/FiraCode-Medium.ttf') format('truetype');
+  font-family: "Fira";
+  src: url("coui://gfx/fonts/FiraCode-Medium.ttf") format("truetype");
 }
 
-tactical-screen .new-log-container {
-	bottom: 0;
-	top: 0.3rem;
-	left: 0.3rem;
-	width: 52rem;
-	height: 15.1rem;
-	position: relative;
-	background-image: url("coui://gfx/ui/skin/tactical_character_background.png");
-	z-index: 1;
+@font-face {
+  font-family: "JetBrains";
+  src: url("coui://gfx/fonts/JetBrainsMono-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Julia";
+  src: url("coui://gfx/fonts/JuliaMono-Medium.ttf") format("truetype");
+}
+
+.tactical-screen .new-log-container {
+  bottom: 0;
+  top: 0.3rem;
+  left: 0.3rem;
+  width: 52rem;
+  height: 15.1rem;
+  position: relative;
+  background-image: url("coui://gfx/ui/skin/tactical_character_background.png");
+  z-index: 1;
 }
 
 .tactical-screen .topbar-event-log-module .ui-control.list {
-	background-image: url("coui://gfx/ui/skin/combat_log_bottom.png");
-	background-size: 39.0rem 41.1rem;
-	background-repeat: no-repeat;
+  background-image: url("coui://gfx/ui/skin/combat_log_bottom.png");
+  background-size: 39rem 41.1rem;
+  background-repeat: no-repeat;
 }
 
 .tactical-screen .topbar-event-log-module .l-event-logs-container {
-	top: 0.0rem;
-	left: 1.0rem;
-	bottom: 0.0rem;
-	height: 13.0rem;
-	position: absolute;
-	margin: auto;
+  top: 0rem;
+  left: 1rem;
+  bottom: 0rem;
+  height: 13rem;
+  position: absolute;
+  margin: auto;
 }
 
 .tactical-screen .topbar-event-log-module .l-event-logs-container .entry {
-	margin-left: 1.0rem;
-	margin-right: 0.2rem;
-	font-weight: 500 !important;
-	font-size: 1.2rem !important;
-	font-style: normal !important;
-	font-family: 'Fira Code' !important;
+  margin-left: 1rem;
+  margin-right: 0.2rem;
+  font-family: "Fira";
+}
+
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-fira .entry {
+  font-family: "Fira" !important;
+}
+
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-jetbrains .entry {
+  font-family: "JetBrains" !important;
+}
+
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-julia .entry {
+  font-family: "Julia" !important;
 }
