@@ -3,7 +3,6 @@
 	Name = "Better Legends Combat Log",
 	Version = "1.0.7",
 	Enabled = true,
-	FontFamily = "Fira",
 	CombatRollsStyle = "Compact",
 	ShowMoraleChanges = true,
 	ShowMisses = true,
@@ -70,7 +69,6 @@
 	});
 
 	page.addDivider("1");
-
 	local settingCombatRollsStyle = page.addEnumSetting(
 		"CombatRollsStyle",
 		"Compact",
@@ -81,7 +79,6 @@
 	settingCombatRollsStyle.addCallback(function(_value) {
 		::ModBetterLegendsCombatLog.CombatRollsStyle = _value;
 	});
-
 	local settingShowMoraleChanges = page.addBooleanSetting(
 		"ShowMoraleChanges",
 		true,
@@ -91,7 +88,6 @@
 	settingShowMoraleChanges.addCallback(function(_value) {
 		::ModBetterLegendsCombatLog.ShowMoraleChanges = _value;
 	});
-
 	local settingShowMisses = page.addBooleanSetting(
 		"ShowMisses",
 		true,
@@ -103,26 +99,6 @@
 	});
 
 	page.addDivider("2");
-
-	local settingFontFamily = page.addEnumSetting(
-		"FontFamily",
-		"Fira",
-		["Fira", "Julia", "JetBrains"],
-		"Font Family",
-		"Changes the font family of the text shown in the battle log.\n\nFira: Default font, easiest to read at both low and high resolutions.\n\nJulia: Slightly thinner font, should look a bit cleaner for most people, likely worse with high resolution displays.\n\nJetBrains: thinnest font so not for everyone, should look nicer for people with good eyesight."
-	);
-	settingFontFamily.addCallback(function(_value) {
-		::ModBetterLegendsCombatLog.FontFamily = _value;
-		if ("Tactical" in ::getroottable() && ::Tactical != null && "EventLog" in ::Tactical && ::Tactical.EventLog != null) {
-			::Tactical.EventLog.changeFontFamily(_value);
-			::logInfo("BetterLegendsCombatLog: Font setting changed to: " + _value);
-		} else {
-			::logInfo("BetterLegendsCombatLog: Not in tactical state, font will be applied on next battle");
-		}
-	});
-
-	page.addDivider("3");
-
 	local colorCallback = function(_color) {
 		::ModBetterLegendsCombatLog[this.getID()] = ::ModBetterLegendsCombatLog.ToHex(_color);
 	}
