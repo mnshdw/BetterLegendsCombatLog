@@ -94,7 +94,7 @@
 		"Show Misses",
 		"When enabled, the combat log will show skills that miss their target(s)."
 	);
-	settingShowMoraleChanges.addCallback(function(_value) {
+	settingShowMisses.addCallback(function(_value) {
 		::ModBetterLegendsCombatLog.ShowMisses = _value;
 	});
 
