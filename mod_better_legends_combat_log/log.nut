@@ -5,7 +5,10 @@
 	patternCategories = null,
 
 	m = {
-		entity = "(\\[color=#[0-9a-f]+\\].+\\[/color\\])",
+		// Pattern that matches both single and multiple colored segments
+		// Single: [color=#hex]text[/color] 
+		// Multiple: [color=#hex]text[/color] [color=#hex]text[/color]
+		entity = "(\\[[Cc]olor=#[0-9a-f]+\\].+\\[/color\\](?:\\s+\\[[Cc]olor=#[0-9a-f]+\\].+\\[/color\\])?)",
 	}
 
 	function init() {
@@ -302,6 +305,19 @@
 			this.init();
 		}
 
+		// PoV overrides actor names for mutants by prefixing them with a colored tag.
+		// For example:
+		//   [color=#01420d]Poisonous[/color] Footman
+		// When this goes through `getColorizedEntityName` the color tags are doubled.
+		// This becomes:
+		//   [color=#8f1e1e][Color=#01420d]Poisonous[/color] Footman[/color]
+		// This breaks our regexes so we need to preprocess the text to unwrap the outer tag.
+		// Final result:
+		//   [Color=#01420d]Poisonous[/color] [color=#8f1e1e]Footman[/color]
+		if (::ModBetterLegendsCombatLog.HasPoV) {
+			_text = ::ModBetterLegendsCombatLog.PoV.preprocessNestedColorTags(_text);
+		}
+
 		// Try patterns from guessed category
 		local category = this.guessCategory(_text);
 		if (category == null) {
@@ -356,10 +372,6 @@
 
 		return null;
 	},
-
-	function formatCombatRoll(_roll, _chance) {
-
-	}
 
 };
 

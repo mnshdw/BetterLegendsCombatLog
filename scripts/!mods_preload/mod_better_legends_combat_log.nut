@@ -48,7 +48,7 @@
 
 ::ModBetterLegendsCombatLog.HooksMod.require("mod_msu >= 1.2.7", "mod_modern_hooks >= 0.5.4");
 
-::ModBetterLegendsCombatLog.HooksMod.queue(">mod_msu", ">mod_legends", ">mod_sellswords", ">mod_ROTUC", function() {
+::ModBetterLegendsCombatLog.HooksMod.queue(">mod_msu", ">mod_legends", ">mod_sellswords", ">mod_ROTUC", ">mod_PoV", function() {
 	::ModBetterLegendsCombatLog.Mod <- ::MSU.Class.Mod(::ModBetterLegendsCombatLog.ID, ::ModBetterLegendsCombatLog.Version, ::ModBetterLegendsCombatLog.Name);
 
 	// Register with MSU so people know to update
@@ -130,7 +130,10 @@
 	local colorHealthSetting = page.addColorPickerSetting("ColorHealth", colorHealthRgba, "Color for hits to the body/head");
 	colorHealthSetting.addCallback(colorCallback);
 
+	::ModBetterLegendsCombatLog.HasPoV <- ::Hooks.hasMod("mod_PoV");
+
 	::include("mod_better_legends_combat_log/log.nut");
+	::include("mod_better_legends_combat_log/pov.nut");
 	::include("mod_better_legends_combat_log/ui.nut");
 	::include("mod_better_legends_combat_log/hooks/ui/screens/tactical/modules/turn_sequence_bar.nut");
 	::include("mod_better_legends_combat_log/scripts/ui/screens/tactical/tactical_screen.nut");
