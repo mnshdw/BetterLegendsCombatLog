@@ -18,8 +18,6 @@ There are a few options that allow customizing what is logged:
 - Show Morale Changes: Enabled by default. Show morale changes for both allies and enemies, eg. `Arbalester is wavering`.
 - Show Misses: Enabled by default. Show skills that miss their target(s).
 
-You can also tweak the font: Choose the font family (Fira, Julia, JetBrains) and size (80%–140%) for the combat log text.
-
 Here is an example with all options turned off:
 
 ![Screenshot_20250516_223418](https://github.com/user-attachments/assets/28167ee7-7d9a-4699-87d3-ec14e773e451)
@@ -33,6 +31,14 @@ All colors used in the combat log can be customized in the mod settings. The fol
 - Colors for all morale changes
 
 <img width="727" height="548" alt="Screenshot_20250718_234757" src="https://github.com/user-attachments/assets/e88cff31-70da-4899-8f3e-4f485b5136e6" />
+
+**Font settings**
+
+You can also tweak the font: choose the font family (Fira, Julia, JetBrains) and size (80%–140%) for the combat log text.
+
+| Fira                     | Julia                             | JetBrains                          
+:-------------------------:|:---------------------------------:|:-----------------------------------:
+<img width="700" height="430" alt="01_Fira" src="https://github.com/user-attachments/assets/0b3c9cd6-6317-41f4-9815-f133c14d5051" />  |  <img width="700" height="430" alt="02_Julia" src="https://github.com/user-attachments/assets/4dd87c15-2032-4d67-8afa-8ca35d7e76bd" />  |  <img width="700" height="430" alt="03_JetBrains" src="https://github.com/user-attachments/assets/5254dac1-6bd0-4266-8b13-e68afebcbeb2" />
 
 **Planned features**
 
