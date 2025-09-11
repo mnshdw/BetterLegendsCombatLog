@@ -6,7 +6,7 @@
 
 	m = {
 		// Pattern that matches both single and multiple colored segments
-		// Single: [color=#hex]text[/color] 
+		// Single: [color=#hex]text[/color]
 		// Multiple: [color=#hex]text[/color] [color=#hex]text[/color]
 		entity = "(\\[[Cc]olor=#[0-9a-f]+\\].+\\[/color\\](?:\\s+\\[[Cc]olor=#[0-9a-f]+\\].+\\[/color\\])?)",
 	}
@@ -379,7 +379,7 @@
 	switch (::ModBetterLegendsCombatLog.CombatRollsStyle) {
 		case "Compact":
 			local comp = _roll.tointeger() <= _chance.tointeger() ? "≤" : ">";
-			return " (" + _roll + "<" + _chance + ")";
+			return " (" + _roll + comp + _chance + ")";
 		case "Vanilla":
 			return " (Chance: " + _chance + ", Rolled: " + _roll + ")";
 		case "Disabled":
