@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.9] - 2025-09-12
+
+- Fixed a regression that made the roll sign always `<`
+- It's now possible to change the font family (Fira, Julia, JetBrains) and size (80%–140%) for the text
+- Increased the height of "expanded" log to show more lines at once, and sped up the animation
+
 ## [1.0.8] - 2025-08-27
 
 - Better support for **Path of the Vatt'ghern** (Pov) mod: mutant names should now always be properly parsed
