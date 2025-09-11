@@ -35,11 +35,14 @@ TacticalScreenTopbarEventLogModule.prototype.createDIV = function (_parentDiv) {
 	this.mEventLogsContainerLayout = eventLogsContainerLayout;
 	// this.mEventLogsContainerLayout.addClass(this.mCurrentFontClass);
 
-	SQ.call(this.mSQHandle, 'getCurrentFontFamily', null, function(fontFamily) {
-		if (fontFamily) {
-			this.changeFontFamily(fontFamily);
-		}
-	});
+	if (this.mSQHandle) {
+		var self = this;
+		SQ.call(this.mSQHandle, 'getCurrentFontFamily', null, function(fontFamily) {
+			if (fontFamily) {
+				self.changeFontFamily(fontFamily);
+			}
+		});
+	}
 
 	// create: button
 	var layout = $('<div class="l-expand-button"/>');
