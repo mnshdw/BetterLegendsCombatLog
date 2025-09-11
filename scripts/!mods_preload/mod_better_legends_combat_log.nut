@@ -115,9 +115,6 @@
 		::ModBetterLegendsCombatLog.FontFamily = _value;
 		if ("Tactical" in ::getroottable() && ::Tactical != null && "EventLog" in ::Tactical && ::Tactical.EventLog != null) {
 			::Tactical.EventLog.changeFontFamily(_value);
-			::logInfo("BetterLegendsCombatLog: Font setting changed to: " + _value);
-		} else {
-			::logInfo("BetterLegendsCombatLog: Not in tactical state, font will be applied on next battle");
 		}
 	});
 
