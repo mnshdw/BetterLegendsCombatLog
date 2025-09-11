@@ -18,6 +18,8 @@ There are a few options that allow customizing what is logged:
 - Show Morale Changes: Enabled by default. Show morale changes for both allies and enemies, eg. `Arbalester is wavering`.
 - Show Misses: Enabled by default. Show skills that miss their target(s).
 
+You can also tweak the font: Choose the font family (Fira, Julia, JetBrains) and size (80%–140%) for the combat log text.
+
 Here is an example with all options turned off:
 
 ![Screenshot_20250516_223418](https://github.com/user-attachments/assets/28167ee7-7d9a-4699-87d3-ec14e773e451)
@@ -37,7 +39,7 @@ All colors used in the combat log can be customized in the mod settings. The fol
 - [ ] Show/hide ally/enemy actions
 - [ ] Group damage reports into a single line
 - [x] Customize text colors
-- [ ] Customize font size and font family
+- [x] Customize font size and font family
 - [ ] Customize combat log width and height
 - [ ] Show additional information that factored in the damage dealt or received
 - [ ] Show additional procs and effects (eg. RotU's Fallen free 3rd attack)

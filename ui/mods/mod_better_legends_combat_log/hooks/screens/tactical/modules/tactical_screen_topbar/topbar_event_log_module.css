@@ -43,6 +43,8 @@
   margin-left: 1rem;
   margin-right: 0.2rem;
   font-family: "Fira";
+  /* Match vanilla 'text-font-very-small' baseline */
+  font-size: 1.2rem;
 }
 
 .tactical-screen .topbar-event-log-module .l-event-logs-container.font-fira .entry {
@@ -55,4 +57,27 @@
 
 .tactical-screen .topbar-event-log-module .l-event-logs-container.font-julia .entry {
   font-family: "Julia" !important;
+}
+
+/* Font size modifiers (scaled from vanilla 1.2rem baseline) */
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-size-80 .entry {
+  font-size: 0.96rem !important;
+}
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-size-90 .entry {
+  font-size: 1.08rem !important;
+}
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-size-100 .entry {
+  font-size: 1.2rem !important;
+}
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-size-110 .entry {
+  font-size: 1.32rem !important;
+}
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-size-120 .entry {
+  font-size: 1.44rem !important;
+}
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-size-130 .entry {
+  font-size: 1.56rem !important;
+}
+.tactical-screen .topbar-event-log-module .l-event-logs-container.font-size-140 .entry {
+  font-size: 1.68rem !important;
 }

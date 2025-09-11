@@ -8,6 +8,7 @@
 		__original(_host);
 		if (::ModBetterLegendsCombatLog.Enabled && m.JSHandle != null) {
 			q.changeFontFamily(::ModBetterLegendsCombatLog.FontFamily);
+			q.changeFontSize(::ModBetterLegendsCombatLog.FontSize);
 		}
 	}
 
@@ -15,9 +16,19 @@
 		return ::ModBetterLegendsCombatLog.FontFamily;
 	}
 
+	q.getCurrentFontSize <- function() {
+		return ::ModBetterLegendsCombatLog.FontSize;
+	}
+
 	q.changeFontFamily <- function(_fontFamily) {
 		if (m.JSHandle != null) {
 			m.JSHandle.asyncCall("changeFontFamily", _fontFamily);
+		}
+	}
+
+	q.changeFontSize <- function(_fontSize) {
+		if (m.JSHandle != null) {
+			m.JSHandle.asyncCall("changeFontSize", _fontSize);
 		}
 	}
 

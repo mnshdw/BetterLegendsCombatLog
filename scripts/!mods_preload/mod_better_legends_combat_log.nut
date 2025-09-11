@@ -4,6 +4,7 @@
 	Version = "1.0.9",
 	Enabled = true,
 	FontFamily = "Fira",
+	FontSize = "100",
 	CombatRollsStyle = "Compact",
 	ShowMoraleChanges = true,
 	ShowMisses = true,
@@ -115,6 +116,20 @@
 		::ModBetterLegendsCombatLog.FontFamily = _value;
 		if ("Tactical" in ::getroottable() && ::Tactical != null && "EventLog" in ::Tactical && ::Tactical.EventLog != null) {
 			::Tactical.EventLog.changeFontFamily(_value);
+		}
+	});
+
+	local settingFontSize = page.addEnumSetting(
+		"FontSize",
+		"100",
+		["80", "90", "100", "110", "120", "130", "140"],
+		"Font Size",
+		"Changes the font size of the text shown in the battle log. Values are in percent relative to the default size."
+	);
+	settingFontSize.addCallback(function(_value) {
+		::ModBetterLegendsCombatLog.FontSize = _value;
+		if ("Tactical" in ::getroottable() && ::Tactical != null && "EventLog" in ::Tactical && ::Tactical.EventLog != null) {
+			::Tactical.EventLog.changeFontSize(_value);
 		}
 	});
 

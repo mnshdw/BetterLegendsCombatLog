@@ -31,6 +31,10 @@ TacticalScreenTopbarEventLogModule.prototype.createDIV = function (_parentDiv) {
 	this.mCurrentFontFamily = 'Fira';
 	this.mCurrentFontClass = 'font-fira';
 
+	// Default font size (percent)
+	this.mCurrentFontSize = '100';
+	this.mCurrentFontSizeClass = 'font-size-100';
+
 	// Apply the initial font class to the container
 	this.mEventLogsContainerLayout = eventLogsContainerLayout;
 	// this.mEventLogsContainerLayout.addClass(this.mCurrentFontClass);
@@ -40,6 +44,11 @@ TacticalScreenTopbarEventLogModule.prototype.createDIV = function (_parentDiv) {
 		SQ.call(this.mSQHandle, 'getCurrentFontFamily', null, function(fontFamily) {
 			if (fontFamily) {
 				self.changeFontFamily(fontFamily);
+			}
+		});
+		SQ.call(this.mSQHandle, 'getCurrentFontSize', null, function(fontSize) {
+			if (fontSize) {
+				self.changeFontSize(fontSize);
 			}
 		});
 	}
@@ -63,6 +72,19 @@ TacticalScreenTopbarEventLogModule.prototype.changeFontFamily = function (_fontF
 		this.mEventLogsContainerLayout.removeClass(this.mCurrentFontClass);
 		var cssClass = 'font-' + _fontFamily.toLowerCase();
 		this.mCurrentFontClass = cssClass;
+		this.mEventLogsContainerLayout.addClass(cssClass);
+	}
+};
+
+TacticalScreenTopbarEventLogModule.prototype.changeFontSize = function (_fontSize) {
+	// Update the current font size
+	this.mCurrentFontSize = _fontSize;
+
+	// Remove current size class and add new
+	if (this.mEventLogsContainerLayout) {
+		this.mEventLogsContainerLayout.removeClass(this.mCurrentFontSizeClass);
+		var cssClass = 'font-size-' + _fontSize;
+		this.mCurrentFontSizeClass = cssClass;
 		this.mEventLogsContainerLayout.addClass(cssClass);
 	}
 };
