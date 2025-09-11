@@ -4,6 +4,23 @@
 		__original();
 	}
 
+	q.connectUI = @(__original) function(_host) {
+		__original(_host);
+		if (::ModBetterLegendsCombatLog.Enabled && m.JSHandle != null) {
+			q.changeFontFamily(::ModBetterLegendsCombatLog.FontFamily);
+		}
+	}
+
+	q.getCurrentFontFamily <- function() {
+		return ::ModBetterLegendsCombatLog.FontFamily;
+	}
+
+	q.changeFontFamily <- function(_fontFamily) {
+		if (m.JSHandle != null) {
+			m.JSHandle.asyncCall("changeFontFamily", _fontFamily);
+		}
+	}
+
 	q.log_newline = @(__original) function() {
 		if (!::ModBetterLegendsCombatLog.Enabled) {
 			__original();
