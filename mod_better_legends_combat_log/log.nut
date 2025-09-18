@@ -5,10 +5,12 @@
 	patternCategories = null,
 
 	m = {
-		// Pattern that matches both single and multiple colored segments
-		// Single: [color=#hex]text[/color]
-		// Multiple: [color=#hex]text[/color] [color=#hex]text[/color]
-		entity = "(\\[[Cc]olor=#[0-9a-f]+\\].+\\[/color\\](?:\\s+\\[[Cc]olor=#[0-9a-f]+\\].+\\[/color\\])?)",
+		// Pattern that matches one or more colored segments
+		// Examples:
+		// - [color=#hex]text[/color]
+		// - [color=#hex]text[/color] [color=#hex]text[/color]
+		// - [color=#hex]adj1[/color] [color=#hex]adj2[/color] [color=#hex]name[/color]
+		entity = "(\\[color=#[0-9a-f]+\\][^\\[]+\\[/color\\](?:\\s+\\[color=#[0-9a-f]+\\][^\\[]+\\[/color\\])*)",
 	}
 
 	function init() {
