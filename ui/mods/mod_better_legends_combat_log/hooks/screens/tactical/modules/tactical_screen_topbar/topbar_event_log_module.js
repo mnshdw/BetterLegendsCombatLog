@@ -2,7 +2,7 @@ TacticalScreenTopbarEventLogModule.prototype.createDIV = function (_parentDiv) {
 	this.mNormalHeight = '13.0rem';
 	this.mExtendedHeight = '80.0rem';
 	this.mExpandDelay = 200;
-	this.mMaxVisibleEntries = 75;
+	this.mMaxVisibleEntries = 150;
 
 	var grandpa = _parentDiv.parent();
 	_parentDiv.css('opacity', '0');
