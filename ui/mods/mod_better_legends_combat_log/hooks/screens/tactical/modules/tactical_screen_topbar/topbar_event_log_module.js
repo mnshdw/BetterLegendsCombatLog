@@ -9,7 +9,7 @@ TacticalScreenTopbarEventLogModule.prototype.createDIV = function (_parentDiv) {
 
 	var newlog = $('<div class="new-log-container"/>');
 	grandpa.append(newlog);
-	var width = Math.max(200, Math.min(grandpa.parent().width() / 3.5, 800));
+	var width = grandpa.parent().width() / 3;
 	newlog.css('width', width);
 	newlog.css('background-size', newlog.width() + " " + newlog.height());
 
