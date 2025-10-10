@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.10] - 2025-10-10
+
+- Double the amount of logs kept in history (from 75 to 150)
+- Uncap the width of the log window, it should be slightly wider at all resolutions now.
+
 ## [1.0.9] - 2025-09-12
 
 - Fixed a regression that made the roll sign always `<`
