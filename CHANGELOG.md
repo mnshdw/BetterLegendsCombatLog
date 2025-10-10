@@ -1,9 +1,14 @@
 # Changelog
 
-## [1.0.10] - 2025-10-10
+## [1.0.11] - 2025-10-10
 
-- Double the amount of logs kept in history (from 75 to 150)
-- Uncap the width of the log window, it should be slightly wider at all resolutions now.
+- Double the amount of entries kept in combat log (from 75 to 150)
+- Uncap the width of the combat log window, it should be slightly wider at all resolutions now.
+
+## [1.0.10] - 2025-09-19
+
+- Fix for combat log background not expanding all the way down when playing in 4k
+- Fix for double-mutated (and more) Path of the Vatt'ghern (Pov) mutant names
 
 ## [1.0.9] - 2025-09-12
 
