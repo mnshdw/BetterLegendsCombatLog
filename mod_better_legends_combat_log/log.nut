@@ -71,9 +71,7 @@
 				if ((sub_matches[1] == "misses") && !::ModBetterLegendsCombatLog.ShowMisses) {
 					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
 				}
-				local colorized_skill = sub_matches[1] == "hits"
-					? ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHit, skill)
-					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, skill);
+				local colorized_skill = ::ModBetterLegendsCombatLog.Log.colorByHitOrMiss(skill, sub_matches[1] == "hits");
 				local text = attacker + " [" + colorized_skill + "]";
 				if (::ModBetterLegendsCombatLog.CombatRollsStyle != "Disabled"
 					&& sub_matches.len() == 5)
@@ -250,7 +248,7 @@
 					colorized_part = ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorArmor, part);
 				}
 
-				return format("&nbsp;&nbsp; » %s → %s %s", damage_matches[1], entity, colorized_part);
+				return format("&nbsp;&nbsp; » %s %s", damage_matches[1], colorized_part);
 			}
 		});
 
@@ -277,9 +275,7 @@
 				if (action == "fails to break free" && !::ModBetterLegendsCombatLog.ShowMisses) {
 					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
 				}
-				local colorized_action = action != "fails to break free"
-					? ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHit, "Break Free")
-					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, "Break Free");
+				local colorized_action = ::ModBetterLegendsCombatLog.Log.colorByHitOrMiss("Break Free", action != "fails to break free");
 				local text = entity + " [" + colorized_action + "]";
 				if (::ModBetterLegendsCombatLog.CombatRollsStyle != "Disabled") {
 					local chance = _self.matches[3];
@@ -411,8 +407,9 @@
 	return null;
 };
 
-::ModBetterLegendsCombatLog.Log.addSuccessColor <- function (_text, _success) {
-	return _success ? ::MSU.Text.colorGreen(_text) : ::MSU.Text.colorRed(_text)
+::ModBetterLegendsCombatLog.Log.colorByHitOrMiss <- function (_text, _hit) {
+	local color = _hit ? ::ModBetterLegendsCombatLog.ColorHit : ::ModBetterLegendsCombatLog.ColorMiss;
+	return ::MSU.Text.color(color, _text);
 };
 
 ::ModBetterLegendsCombatLog.Log.padWith <- function (_text, _length, _with) {

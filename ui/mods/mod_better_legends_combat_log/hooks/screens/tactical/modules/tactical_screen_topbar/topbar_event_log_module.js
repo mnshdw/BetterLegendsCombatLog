@@ -47,7 +47,6 @@ TacticalScreenTopbarEventLogModule.prototype.createDIV = function (_parentDiv) {
 	// this.mEventLogsContainerLayout.addClass(this.mCurrentFontClass);
 
 	if (this.mSQHandle) {
-		var self = this;
 		SQ.call(this.mSQHandle, 'getCurrentFontFamily', null, function(fontFamily) {
 			if (fontFamily) {
 				self.changeFontFamily(fontFamily);
