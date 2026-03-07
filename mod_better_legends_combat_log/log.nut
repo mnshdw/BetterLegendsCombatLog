@@ -39,11 +39,11 @@
 				regexp("(hits|misses) " + this.m.entity),
 				regexp(this.m.entity + " evades the attack")
 			],
-			match = function(_self, _text) {
+			match = function (_self, _text) {
 				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
 				return _self.matches != null && _self.matches.len() == 3;
 			},
-			replace = function(_self, _text) {
+			replace = function (_self, _text) {
 				local attacker = _self.matches[1];
 				local andPos = _self.matches[2].find(" and ");
 				if (andPos == null) {
@@ -73,9 +73,11 @@
 				}
 				local colorized_skill = sub_matches[1] == "hits"
 					? ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHit, skill)
-					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, skill)
+					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, skill);
 				local text = attacker + " [" + colorized_skill + "]";
-				if (::ModBetterLegendsCombatLog.CombatRollsStyle != "Disabled" && sub_matches.len() == 5) {
+				if (::ModBetterLegendsCombatLog.CombatRollsStyle != "Disabled"
+					&& sub_matches.len() == 5)
+				{
 					local chance = sub_matches[3];
 					local roll = sub_matches[4];
 					text += ::ModBetterLegendsCombatLog.Log.formatCombatRoll(roll, chance);
@@ -92,15 +94,17 @@
 		this.addPattern({
 			category = "deaths",
 			regex = regexp(this.m.entity + " has (killed|struck down) " + this.m.entity),
-			match = function(_self, _text) {
+			match = function (_self, _text) {
 				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
 				return _self.matches != null && _self.matches.len() == 4;
 			},
-			replace = function(_self, _text) {
+			replace = function (_self, _text) {
 				local attacker = _self.matches[1];
 				local action = _self.matches[2];
 				local victim = _self.matches[3];
-				return attacker + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorDeath, action == "killed" ? "KILLED" : "STRUCK DOWN") + "] " + victim;
+				return attacker + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorDeath, action == "killed"
+					? "KILLED"
+					: "STRUCK DOWN") + "] " + victim;
 			}
 		});
 
@@ -109,14 +113,16 @@
 		this.addPattern({
 			category = "deaths",
 			regex = regexp(this.m.entity + " (has died|is struck down)"),
-			match = function(_self, _text) {
+			match = function (_self, _text) {
 				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
 				return _self.matches != null && _self.matches.len() == 3;
 			},
-			replace = function(_self, _text) {
+			replace = function (_self, _text) {
 				local entity = _self.matches[1];
 				local action = _self.matches[2];
-				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorDeath, action == "has died" ? "DIED" : "STRUCK DOWN") + "]";
+				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorDeath, action == "has died"
+					? "DIED"
+					: "STRUCK DOWN") + "]";
 			}
 		});
 
@@ -128,17 +134,17 @@
 		this.addPattern({
 			category = "morale",
 			regex = regexp(this.m.entity + "( is fleeing| is breaking| is wavering|'s morale is now steady| is confident| has rallied)"),
-			match = function(_self, _text) {
+			match = function (_self, _text) {
 				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
 				return _self.matches != null && _self.matches.len() == 3;
 			},
-			replace = function(_self, _text) {
+			replace = function (_self, _text) {
 				if (!::ModBetterLegendsCombatLog.ShowMoraleChanges) {
 					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
 				}
 				local color;
 				local text;
-				switch(_self.matches[2]) {
+				switch (_self.matches[2]) {
 					case " is fleeing":
 						color = ::ModBetterLegendsCombatLog.ColorVeryNegativeValue;
 						text = "Fleeing";
@@ -181,10 +187,10 @@
 			part_needle = "'s ",
 			color_needle = "[/color]",
 			regex_damage = regexp("\\[b\\]([0-9]+)\\[/b\\] damage"),
-			match = function(_self, _text) {
+			match = function (_self, _text) {
 				return _text.find(_self.hit_needle) != null;
 			},
-			replace = function(_self, _text) {
+			replace = function (_self, _text) {
 				local hitPos = _text.find(_self.hit_needle);
 				if (hitPos == null) {
 					::logError(format("Invalid match: missing '%s' in '%s'", _self.hit_needle, _text));
@@ -261,11 +267,11 @@
 		this.addPattern({
 			category = "rooted",
 			regex = regexp(this.m.entity + " (effortlessly breaks free|breaks free|fails to break free) \\(Chance: (\\d+), Rolled: (\\d+)\\)"),
-			match = function(_self, _text) {
+			match = function (_self, _text) {
 				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
 				return _self.matches != null && _self.matches.len() == 5;
 			},
-			replace = function(_self, _text) {
+			replace = function (_self, _text) {
 				local entity = _self.matches[1];
 				local action = _self.matches[2];
 				if (action == "fails to break free" && !::ModBetterLegendsCombatLog.ShowMisses) {
@@ -273,7 +279,7 @@
 				}
 				local colorized_action = action != "fails to break free"
 					? ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorHit, "Break Free")
-					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, "Break Free")
+					: ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorMiss, "Break Free");
 				local text = entity + " [" + colorized_action + "]";
 				if (::ModBetterLegendsCombatLog.CombatRollsStyle != "Disabled") {
 					local chance = _self.matches[3];
@@ -344,17 +350,18 @@
 			return "damage";
 		} else if (_text.find(" killed ") != null
 			|| _text.find(" died") != null
-			|| _text.find(" struck down") != null) {
+			|| _text.find(" struck down") != null)
+		{
 			return "deaths";
 		} else if (_text.find(" is confident") != null
 			|| _text.find(" is now steady") != null
 			|| _text.find(" is wavering") != null
 			|| _text.find(" is breaking") != null
 			|| _text.find(" is fleeing") != null
-			|| _text.find(" has rallied") != null) {
+			|| _text.find(" has rallied") != null)
+		{
 			return "morale";
-		} else if (_text.find(" break free") != null
-			|| _text.find(" breaks free") != null) {
+		} else if (_text.find(" break free") != null || _text.find(" breaks free") != null) {
 			return "rooted";
 		}
 		return null;
@@ -377,7 +384,7 @@
 
 };
 
-::ModBetterLegendsCombatLog.Log.formatCombatRoll <- function(_roll, _chance) {
+::ModBetterLegendsCombatLog.Log.formatCombatRoll <- function (_roll, _chance) {
 	switch (::ModBetterLegendsCombatLog.CombatRollsStyle) {
 		case "Compact":
 			local comp = _roll.tointeger() <= _chance.tointeger() ? "≤" : ">";
@@ -392,7 +399,7 @@
 	}
 };
 
-::ModBetterLegendsCombatLog.Log.matchRegex <- function(_regex, _text) {
+::ModBetterLegendsCombatLog.Log.matchRegex <- function (_regex, _text) {
 	local result = _regex.capture(_text);
 	if (result) {
 		local matches = [];
@@ -416,8 +423,8 @@
 	return padded;
 };
 
-::ModBetterLegendsCombatLog.Log.logNextRound <- function(_turn) {
-	::Tactical.EventLog.logEx("\n===== ROUND " + _turn + "\n");
+::ModBetterLegendsCombatLog.Log.logNextRound <- function (_turn) {
+	::Tactical.EventLog.logEx("\n===== ROUND " + _turn + " =====\n");
 };
 
 ::ModBetterLegendsCombatLog.Log.SuppressOutput <- "ModBetterLegendsCombatLog::SUPPRESS_OUTPUT";
