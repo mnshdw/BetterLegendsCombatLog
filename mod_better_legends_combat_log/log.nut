@@ -252,11 +252,113 @@
 			}
 		});
 
-		// Status patterns
-		// Example: [color=#1e468f]Bandit Veteran[/color] battered [color=#1e468f]Billman[/color] leaving them baffled
-		// Example: [color=#1e468f]Bandit Veteran[/color] has stunned [color=#1e468f]Billman[/color] for one turn
-		// Example: [color=#1e468f]Brigand Raider[/color] feinted [color=#1e468f]Wardog[/color] leaving them exposed!
-		// TODO
+		// Status: [Entity] has (stunned|dazed|staggered|disarmed) [Entity] for (one|two) turn(s)
+		// Also: [Entity] has stunned and staggered [Entity] for one turn
+		this.addPattern({
+			category = "status",
+			regex = regexp(this.m.entity + " has (stunned and staggered|stunned|dazed|staggered|disarmed) " + this.m.entity + " for (one|two) turns?"),
+			match = function (_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 5;
+			},
+			replace = function (_self, _text) {
+				local user = _self.matches[1];
+				local effect = _self.matches[2];
+				local target = _self.matches[3];
+				local duration = _self.matches[4] == "one" ? "1" : "2";
+				local label = ::ModBetterLegendsCombatLog.Log.capitalizeEffect(effect);
+				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, label) + "] (" + duration + " turn" + (duration == "1"
+					? ""
+					: "s") + ")";
+			}
+		});
+
+		// Status: [Entity] struck a (hit|blow) that leaves [Entity] (stunned|dazed)
+		this.addPattern({
+			category = "status",
+			regex = regexp(this.m.entity + " struck a (?:hit|blow) that leaves " + this.m.entity + " (stunned|dazed)"),
+			match = function (_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 4;
+			},
+			replace = function (_self, _text) {
+				local user = _self.matches[1];
+				local target = _self.matches[2];
+				local effect = _self.matches[3];
+				local label = ::ModBetterLegendsCombatLog.Log.capitalizeEffect(effect);
+				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, label) + "]";
+			}
+		});
+
+		// Status: [Entity] has knocked back [Entity]
+		this.addPattern({
+			category = "status",
+			regex = regexp(this.m.entity + " has knocked back " + this.m.entity),
+			match = function (_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 3;
+			},
+			replace = function (_self, _text) {
+				local user = _self.matches[1];
+				local target = _self.matches[2];
+				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, "Knocked Back") + "]";
+			}
+		});
+
+		// Status: [Entity] (battered|feinted) [Entity] leaving them (baffled|exposed!)
+		this.addPattern({
+			category = "status",
+			regex = regexp(this.m.entity + " (?:battered|feinted) " + this.m.entity + " leaving them (.+)"),
+			match = function (_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 4;
+			},
+			replace = function (_self, _text) {
+				local user = _self.matches[1];
+				local target = _self.matches[2];
+				local effect = _self.matches[3];
+				// Strip trailing punctuation (eg. "exposed!")
+				if (effect.len() > 0 && effect[effect.len() - 1] == "") {
+					effect = effect.slice(0, effect.len() - 1);
+				}
+				local label = ::ModBetterLegendsCombatLog.Log.capitalizeEffect(effect);
+				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, label) + "]";
+			}
+		});
+
+		// Status: [Entity] is (poisoned|bleeding|bleeding from grazes)
+		this.addPattern({
+			category = "status",
+			regex = regexp(this.m.entity + " is (poisoned\\.?|bleeding from grazes|bleeding\\.?)"),
+			match = function (_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 3;
+			},
+			replace = function (_self, _text) {
+				local entity = _self.matches[1];
+				local effect = _self.matches[2];
+				// Strip trailing period
+				if (effect.len() > 0 && effect[effect.len() - 1] == "") {
+					effect = effect.slice(0, effect.len() - 1);
+				}
+				local label = ::ModBetterLegendsCombatLog.Log.capitalizeEffect(effect);
+				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, label) + "]";
+			}
+		});
+
+		// Status: [Entity] tumbles (away from danger|and is repelled)
+		this.addPattern({
+			category = "status",
+			regex = regexp(this.m.entity + " tumbles (away from danger|and is repelled)"),
+			match = function (_self, _text) {
+				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
+				return _self.matches != null && _self.matches.len() == 3;
+			},
+			replace = function (_self, _text) {
+				local entity = _self.matches[1];
+				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorPositiveValue, "Tumble") + "]";
+			}
+		});
 
 		// Rooted patterns
 		// Example: [color=#1e468f]Bandit Veteran[/color] effortlessly breaks free (Chance: 99, Rolled: 1)
@@ -285,10 +387,6 @@
 				return text;
 			}
 		});
-
-		// Special patterns
-		// TODO: [color=#1e468f]Eingelias the Vala[/color] is poisoned
-		// TODO: [color=#1e468f]Goblin Skirmisher[/color] tumbles away from danger
 
 		::logInfo("Combat Log patterns initialized");
 	},
@@ -359,6 +457,20 @@
 			return "morale";
 		} else if (_text.find(" break free") != null || _text.find(" breaks free") != null) {
 			return "rooted";
+		} else if (_text.find(" has stunned ") != null
+			|| _text.find(" has dazed ") != null
+			|| _text.find(" has staggered ") != null
+			|| _text.find(" has disarmed ") != null
+			|| _text.find(" has knocked back ") != null
+			|| _text.find(" struck a hit that leaves ") != null
+			|| _text.find(" struck a blow that leaves ") != null
+			|| _text.find(" battered ") != null
+			|| _text.find(" feinted ") != null
+			|| _text.find(" is poisoned") != null
+			|| _text.find(" is bleeding") != null
+			|| _text.find(" tumbles ") != null)
+		{
+			return "status";
 		}
 		return null;
 	},
@@ -410,6 +522,18 @@
 ::ModBetterLegendsCombatLog.Log.colorByHitOrMiss <- function (_text, _hit) {
 	local color = _hit ? ::ModBetterLegendsCombatLog.ColorHit : ::ModBetterLegendsCombatLog.ColorMiss;
 	return ::MSU.Text.color(color, _text);
+};
+
+::ModBetterLegendsCombatLog.Log.capitalizeEffect <- function (_effect) {
+	local words = split(_effect, " ");
+	local result = "";
+	foreach (i, word in words) {
+		if (i > 0) {
+			result += " ";
+		}
+		result += word.slice(0, 1).toupper() + word.slice(1);
+	}
+	return result;
 };
 
 ::ModBetterLegendsCombatLog.Log.padWith <- function (_text, _length, _with) {
