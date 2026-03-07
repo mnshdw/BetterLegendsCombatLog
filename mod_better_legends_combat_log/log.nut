@@ -248,7 +248,7 @@
 					colorized_part = ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorArmor, part);
 				}
 
-				return format("&nbsp;&nbsp; » %s %s", damage_matches[1], colorized_part);
+				return format("&nbsp;&nbsp; » %s → %s %s", damage_matches[1], entity, colorized_part);
 			}
 		});
 
