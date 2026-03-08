@@ -8,6 +8,7 @@
 	CombatRollsStyle = "Compact",
 	ShowMoraleChanges = true,
 	ShowMisses = true,
+	ShowStatusEffects = true,
 	// Color for successful hits.
 	ColorHit = "#135213",
 	// Color for misses.
@@ -103,6 +104,16 @@
 	);
 	settingShowMisses.addCallback(function(_value) {
 		::ModBetterLegendsCombatLog.ShowMisses = _value;
+	});
+
+	local settingShowStatusEffects = page.addBooleanSetting(
+		"ShowStatusEffects",
+		true,
+		"Show Status Effects",
+		"When enabled, the combat log will show status effects like stunned, dazed, staggered, poisoned, etc."
+	);
+	settingShowStatusEffects.addCallback(function(_value) {
+		::ModBetterLegendsCombatLog.ShowStatusEffects = _value;
 	});
 
 	page.addDivider("2");
