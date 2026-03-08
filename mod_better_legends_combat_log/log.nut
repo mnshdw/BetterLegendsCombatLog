@@ -263,7 +263,7 @@
 		// Also: [Entity] has stunned and staggered [Entity] for one turn
 		this.addPattern({
 			category = "status",
-			regex = regexp(this.m.entity + " has (stunned and staggered|stunned|dazed|staggered|disarmed) " + this.m.entity + " for (one|two) turns?"),
+			regex = regexp(this.m.entity + " has (stunned and staggered|stunned|dazed|staggered|disarmed) " + this.m.entity + " for (\\w+) turns?"),
 			match = function (_self, _text) {
 				_self.matches <- ::ModBetterLegendsCombatLog.Log.matchRegex(_self.regex, _text);
 				return _self.matches != null && _self.matches.len() == 5;
@@ -275,7 +275,25 @@
 				local user = _self.matches[1];
 				local effect = _self.matches[2];
 				local target = _self.matches[3];
-				local duration = _self.matches[4] == "one" ? "1" : "2";
+				local raw_duration = _self.matches[4];
+				local duration;
+				switch (raw_duration) {
+					case "one":
+					case "1":
+						duration = "1";
+						break;
+					case "two":
+					case "2":
+						duration = "2";
+						break;
+					case "three":
+					case "3":
+						duration = "3";
+						break;
+					default:
+						duration = raw_duration;
+						break;
+				}
 				local label = ::ModBetterLegendsCombatLog.Log.capitalizeEffect(effect);
 				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorStatus, label) + "] (" + duration + " turn" + (duration == "1"
 					? ""
