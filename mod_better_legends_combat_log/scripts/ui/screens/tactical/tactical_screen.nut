@@ -45,9 +45,19 @@
 			return;
 		}
 		local new_text = ::ModBetterLegendsCombatLog.Log.intercept(_text);
+		if (new_text == ::ModBetterLegendsCombatLog.Log.DamageBuffered) {
+			if (!::ModBetterLegendsCombatLog.Log.damageTimerScheduled) {
+				::ModBetterLegendsCombatLog.Log.damageTimerScheduled = true;
+				Time.scheduleEvent(TimeUnit.Real, 50, function (_jsHandle) {
+					::ModBetterLegendsCombatLog.Log.flushDamageBuffer(_jsHandle);
+				}, m.JSHandle);
+			}
+			return;
+		}
 		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
 			return;
 		}
+		::ModBetterLegendsCombatLog.Log.flushDamageBuffer(m.JSHandle);
 		m.JSHandle.asyncCall("log", new_text);
 	}
 
@@ -57,12 +67,26 @@
 			return;
 		}
 		local new_text = ::ModBetterLegendsCombatLog.Log.intercept(_text);
+		if (new_text == ::ModBetterLegendsCombatLog.Log.DamageBuffered) {
+			if (!::ModBetterLegendsCombatLog.Log.damageTimerScheduled) {
+				::ModBetterLegendsCombatLog.Log.damageTimerScheduled = true;
+				Time.scheduleEvent(TimeUnit.Real, 50, function (_jsHandle) {
+					::ModBetterLegendsCombatLog.Log.flushDamageBuffer(_jsHandle);
+				}, m.JSHandle);
+			}
+			return;
+		}
 		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
 			return;
 		}
+		::ModBetterLegendsCombatLog.Log.flushDamageBuffer(m.JSHandle);
 		__original(new_text);
 	}
 
-	// clear
+	q.clear = @(__original) function () {
+		::ModBetterLegendsCombatLog.Log.damageBuffer = [];
+		::ModBetterLegendsCombatLog.Log.damageTimerScheduled = false;
+		__original();
+	}
 
 });

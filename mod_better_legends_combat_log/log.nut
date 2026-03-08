@@ -83,6 +83,7 @@
 					text += " (Evade)";
 				}
 				local target = sub_matches.len() > 2 ? sub_matches[2] : sub_matches[1];
+				::ModBetterLegendsCombatLog.Log.lastAttackTarget = target;
 				return text + " → " + target;
 			}
 		});
@@ -216,6 +217,11 @@
 				}
 				local part = entity_and_part.slice(partPos + _self.part_needle.len());
 
+				// Guard against empty part name (can happen with unnamed armor/helmet items)
+				if (part == "") {
+					part = "armor";
+				}
+
 				// Right side: [b]16[/b] damage and has been destroyed
 				local damage = _text.slice(hitPos + _self.hit_needle.len());
 
@@ -248,7 +254,8 @@
 					colorized_part = ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorArmor, part);
 				}
 
-				return format("&nbsp;&nbsp; » %s → %s %s", damage_matches[1], entity, colorized_part);
+				::ModBetterLegendsCombatLog.Log.bufferDamage(entity, damage_matches[1], colorized_part);
+				return ::ModBetterLegendsCombatLog.Log.DamageBuffered;
 			}
 		});
 
@@ -262,12 +269,15 @@
 				return _self.matches != null && _self.matches.len() == 5;
 			},
 			replace = function (_self, _text) {
+				if (!::ModBetterLegendsCombatLog.ShowStatusEffects) {
+					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
+				}
 				local user = _self.matches[1];
 				local effect = _self.matches[2];
 				local target = _self.matches[3];
 				local duration = _self.matches[4] == "one" ? "1" : "2";
 				local label = ::ModBetterLegendsCombatLog.Log.capitalizeEffect(effect);
-				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, label) + "] (" + duration + " turn" + (duration == "1"
+				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorStatus, label) + "] (" + duration + " turn" + (duration == "1"
 					? ""
 					: "s") + ")";
 			}
@@ -282,11 +292,14 @@
 				return _self.matches != null && _self.matches.len() == 4;
 			},
 			replace = function (_self, _text) {
+				if (!::ModBetterLegendsCombatLog.ShowStatusEffects) {
+					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
+				}
 				local user = _self.matches[1];
 				local target = _self.matches[2];
 				local effect = _self.matches[3];
 				local label = ::ModBetterLegendsCombatLog.Log.capitalizeEffect(effect);
-				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, label) + "]";
+				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorStatus, label) + "]";
 			}
 		});
 
@@ -299,9 +312,12 @@
 				return _self.matches != null && _self.matches.len() == 3;
 			},
 			replace = function (_self, _text) {
+				if (!::ModBetterLegendsCombatLog.ShowStatusEffects) {
+					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
+				}
 				local user = _self.matches[1];
 				local target = _self.matches[2];
-				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, "Knocked Back") + "]";
+				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorStatus, "Knocked Back") + "]";
 			}
 		});
 
@@ -314,6 +330,9 @@
 				return _self.matches != null && _self.matches.len() == 4;
 			},
 			replace = function (_self, _text) {
+				if (!::ModBetterLegendsCombatLog.ShowStatusEffects) {
+					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
+				}
 				local user = _self.matches[1];
 				local target = _self.matches[2];
 				local effect = _self.matches[3];
@@ -322,7 +341,7 @@
 					effect = effect.slice(0, effect.len() - 1);
 				}
 				local label = ::ModBetterLegendsCombatLog.Log.capitalizeEffect(effect);
-				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, label) + "]";
+				return user + " → " + target + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorStatus, label) + "]";
 			}
 		});
 
@@ -335,6 +354,9 @@
 				return _self.matches != null && _self.matches.len() == 3;
 			},
 			replace = function (_self, _text) {
+				if (!::ModBetterLegendsCombatLog.ShowStatusEffects) {
+					return ::ModBetterLegendsCombatLog.Log.SuppressOutput;
+				}
 				local entity = _self.matches[1];
 				local effect = _self.matches[2];
 				// Strip trailing period
@@ -342,7 +364,7 @@
 					effect = effect.slice(0, effect.len() - 1);
 				}
 				local label = ::ModBetterLegendsCombatLog.Log.capitalizeEffect(effect);
-				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorNegativeValue, label) + "]";
+				return entity + " [" + ::MSU.Text.color(::ModBetterLegendsCombatLog.ColorStatus, label) + "]";
 			}
 		});
 
@@ -511,7 +533,7 @@
 	local result = _regex.capture(_text);
 	if (result) {
 		local matches = [];
-		foreach (i, val in result) {
+		foreach (_i, val in result) {
 			matches.push(_text.slice(val.begin, val.end));
 		}
 		return matches;
@@ -549,3 +571,62 @@
 };
 
 ::ModBetterLegendsCombatLog.Log.SuppressOutput <- "ModBetterLegendsCombatLog::SUPPRESS_OUTPUT";
+::ModBetterLegendsCombatLog.Log.DamageBuffered <- "ModBetterLegendsCombatLog::DAMAGE_BUFFERED";
+
+::ModBetterLegendsCombatLog.Log.damageBuffer <- [];
+::ModBetterLegendsCombatLog.Log.damageTimerScheduled <- false;
+::ModBetterLegendsCombatLog.Log.lastAttackTarget <- null;
+
+::ModBetterLegendsCombatLog.Log.bufferDamage <- function (_entity, _amount, _colorized_part) {
+	local len = this.damageBuffer.len();
+	if (len > 0 && this.damageBuffer[len - 1].entity == _entity) {
+		this.damageBuffer[len - 1].parts.push({
+			amount = _amount,
+			colorized_part = _colorized_part
+		});
+	} else {
+		this.damageBuffer.push({
+			entity = _entity,
+			parts = [
+				{
+					amount = _amount,
+					colorized_part = _colorized_part
+				}
+			]
+		});
+	}
+};
+
+::ModBetterLegendsCombatLog.Log.flushDamageBuffer <- function (_jsHandle) {
+	if (this.damageBuffer.len() == 0) {
+		return;
+	}
+
+	if (_jsHandle != null) {
+		// Track whether we've already omitted the entity once for this flush
+		local omittedOnce = false;
+		foreach (entry in this.damageBuffer) {
+			local parts_text = "";
+			foreach (i, part in entry.parts) {
+				if (i > 0) {
+					parts_text += ", ";
+				}
+				parts_text += part.amount + " " + part.colorized_part;
+			}
+			// Omit entity name for the first entry that matches the last attack target
+			local omit = !omittedOnce
+				&& this.lastAttackTarget != null
+				&& entry.entity == this.lastAttackTarget;
+			if (omit) {
+				_jsHandle.asyncCall("log", format("&nbsp;&nbsp; » %s", parts_text));
+				omittedOnce = true;
+			} else {
+				_jsHandle.asyncCall("log", format("&nbsp;&nbsp; » %s → %s", parts_text, entry.entity));
+			}
+		}
+	}
+
+	this.damageBuffer = [];
+	this.damageTimerScheduled = false;
+	this.lastAttackTarget = null;
+};
