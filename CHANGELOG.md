@@ -3,8 +3,13 @@
 ## [1.0.12] - 2026-03-08
 
 - Add a new "collapsed" state which only shows ~2 lines. Perfect if you want the maximum screen estate!
-- Damage from hits is now buffered and displayed in a single line, which should make it even easier to read and follow.
-- Most status effects (eg. stagger) are now handled: you can change their color or hide them entirely in the mod settings.
+- Damage from hits is now buffered and displayed in a single line when possible, which should make it even easier to read and follow.
+
+<img width="874" height="108" alt="Screenshot_20260308_173109" src="https://github.com/user-attachments/assets/0de35566-9960-4805-9f5f-50df2e4918b5" />
+
+- Most status effects (eg. stagger) are now handled: you can customize their color or even hide them entirely in the mod settings, if you prefer to keep the log clean.
+
+<img width="681" height="63" alt="Screenshot_20260308_204502" src="https://github.com/user-attachments/assets/d4f84cdc-bb39-4027-98f1-48369b2ac659" />
 
 ## [1.0.11] - 2025-10-10
 
