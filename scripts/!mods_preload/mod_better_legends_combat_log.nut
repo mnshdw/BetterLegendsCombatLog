@@ -21,7 +21,9 @@
 	// Color for hits to armor.
 	ColorArmor = "#666666",
 	// Color for hits to the body/head.
-	ColorHealth = "#900c3f"
+	ColorHealth = "#900c3f",
+	// Color for status effects (stunned, dazed, poisoned, etc.)
+	ColorStatus = "#731f39"
 };
 
 // Converts from "19,82,19,1.0" to "#135213"
@@ -165,6 +167,9 @@
 	local colorHealthRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorHealth);
 	local colorHealthSetting = page.addColorPickerSetting("ColorHealth", colorHealthRgba, "Color for hits to the body/head");
 	colorHealthSetting.addCallback(colorCallback);
+	local colorStatusRgba = ::ModBetterLegendsCombatLog.ToRgba(::ModBetterLegendsCombatLog.ColorStatus);
+	local colorStatusSetting = page.addColorPickerSetting("ColorStatus", colorStatusRgba, "Color for status effects (stunned, dazed, poisoned, etc.)");
+	colorStatusSetting.addCallback(colorCallback);
 
 	::ModBetterLegendsCombatLog.HasPoV <- ::Hooks.hasMod("mod_PoV");
 
