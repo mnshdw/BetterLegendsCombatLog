@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.12] - 2026-03-08
+
+- Add a new "collapsed" state which only shows ~2 lines. Perfect if you want the maximum screen estate!
+- Damage from hits is now buffered and displayed in a single line, which should make it even easier to read and follow.
+- Most status effects (eg. stagger) are now handled: you can change their color or hide them entirely in the mod settings.
+
 ## [1.0.11] - 2025-10-10
 
 - Double the amount of entries kept in combat log (from 75 to 150)
