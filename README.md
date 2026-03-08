@@ -17,6 +17,7 @@ There are a few options that allow customizing what is logged:
 - Show Combat Rolls: Enbled by default. Shows the attack rolls, eg `23≤56`.
 - Show Morale Changes: Enabled by default. Show morale changes for both allies and enemies, eg. `Arbalester is wavering`.
 - Show Misses: Enabled by default. Show skills that miss their target(s).
+- Show Status Effects: Enabled by default.
 
 Here is an example with all options turned off:
 
@@ -28,7 +29,8 @@ All colors used in the combat log can be customized in the mod settings. The fol
 
 - Colors for hits and misses
 - Colors for hits to armor and body/head
-- Colors for all morale changes
+- Colors for all morale changes (eg. confident, wavering, etc.)
+- Colors for all status effects (eg. poisoned, staggered, etc.)
 
 <img width="727" height="548" alt="Screenshot_20250718_234757" src="https://github.com/user-attachments/assets/e88cff31-70da-4899-8f3e-4f485b5136e6" />
 
@@ -43,9 +45,9 @@ You can also tweak the font: choose the font family (Fira, Julia, JetBrains) and
 **Planned features**
 
 - [ ] Show/hide ally/enemy actions
-- [ ] Group damage reports into a single line
+- [x] Group damage reports into a single line
 - [x] Customize text colors
 - [x] Customize font size and font family
-- [ ] Customize combat log width and height
-- [ ] Show additional information that factored in the damage dealt or received
-- [ ] Show additional procs and effects (eg. RotU's Fallen free 3rd attack)
+- [x] Customize combat log width and height (sort of)
+- [ ] ~Show additional information that factored in the damage dealt or received~ Out of scope
+- [ ] ~Show additional procs and effects (eg. RotU's Fallen free 3rd attack)~ Out of scope
