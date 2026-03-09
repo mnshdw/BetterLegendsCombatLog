@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.13] - 2026-03-09
+
+- Add an option to completely hide the combat log. Enjoy Battle Brothers in IMAX now!
+
+<img width="2560" height="1440" alt="Screenshot_20260309_230054" src="https://github.com/user-attachments/assets/0ebd7555-b3ab-4eee-aedb-8d8bfbb11884" />
+
 ## [1.0.12] - 2026-03-08
 
 - Add a new "collapsed" state which only shows ~2 lines. Perfect if you want the maximum screen estate!
