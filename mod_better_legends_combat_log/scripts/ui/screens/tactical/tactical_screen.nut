@@ -9,6 +9,7 @@
 		if (::ModBetterLegendsCombatLog.Enabled && m.JSHandle != null) {
 			q.changeFontFamily(::ModBetterLegendsCombatLog.FontFamily);
 			q.changeFontSize(::ModBetterLegendsCombatLog.FontSize);
+			q.setVisibility(!::ModBetterLegendsCombatLog.HideCombatLog);
 		}
 	}
 
@@ -29,6 +30,12 @@
 	q.changeFontSize <- function (_fontSize) {
 		if (m.JSHandle != null) {
 			m.JSHandle.asyncCall("changeFontSize", _fontSize);
+		}
+	}
+
+	q.setVisibility <- function (_visible) {
+		if (m.JSHandle != null) {
+			m.JSHandle.asyncCall("setVisibility", _visible);
 		}
 	}
 

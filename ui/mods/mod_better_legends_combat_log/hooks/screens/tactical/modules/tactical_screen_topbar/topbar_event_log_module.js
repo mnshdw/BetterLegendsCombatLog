@@ -95,6 +95,12 @@ TacticalScreenTopbarEventLogModule.prototype.changeFontSize = function (_fontSiz
 	}
 };
 
+TacticalScreenTopbarEventLogModule.prototype.setVisibility = function (_visible) {
+	if (this.mNewLogContainer) {
+		this.mNewLogContainer.css('display', _visible ? '' : 'none');
+	}
+};
+
 TacticalScreenTopbarEventLogModule.prototype.cycleLogState = function () {
 	var nextState;
 	switch (this.mLogState) {

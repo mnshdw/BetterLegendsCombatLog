@@ -3,6 +3,7 @@
 	Name = "Better Legends Combat Log",
 	Version = "1.0.11",
 	Enabled = true,
+	HideCombatLog = false,
 	FontFamily = "Fira",
 	FontSize = "100",
 	CombatRollsStyle = "Compact",
@@ -71,6 +72,19 @@
 	);
 	settingEnabled.addCallback(function(_value) {
 		::ModBetterLegendsCombatLog.Enabled = _value;
+	});
+
+	local settingHideCombatLog = page.addBooleanSetting(
+		"HideCombatLog",
+		false,
+		"Hide Combat Log",
+		"When enabled, the combat log will be completely hidden from the tactical screen."
+	);
+	settingHideCombatLog.addCallback(function(_value) {
+		::ModBetterLegendsCombatLog.HideCombatLog = _value;
+		if ("Tactical" in ::getroottable() && ::Tactical != null && "EventLog" in ::Tactical && ::Tactical.EventLog != null) {
+			::Tactical.EventLog.setVisibility(!_value);
+		}
 	});
 
 	page.addDivider("1");
