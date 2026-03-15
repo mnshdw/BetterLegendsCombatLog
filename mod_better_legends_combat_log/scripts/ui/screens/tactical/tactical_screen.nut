@@ -6,10 +6,10 @@
 
 	q.connectUI = @(__original) function (_host) {
 		__original(_host);
-		if (::ModBetterLegendsCombatLog.Enabled && m.JSHandle != null) {
-			q.changeFontFamily(::ModBetterLegendsCombatLog.FontFamily);
-			q.changeFontSize(::ModBetterLegendsCombatLog.FontSize);
-			q.setVisibility(!::ModBetterLegendsCombatLog.HideCombatLog);
+		if (::ModBetterLegendsCombatLog.Enabled && this.m.JSHandle != null) {
+			this.changeFontFamily(::ModBetterLegendsCombatLog.FontFamily);
+			this.changeFontSize(::ModBetterLegendsCombatLog.FontSize);
+			this.setVisibility(!::ModBetterLegendsCombatLog.HideCombatLog);
 		}
 	}
 
@@ -22,20 +22,20 @@
 	}
 
 	q.changeFontFamily <- function (_fontFamily) {
-		if (m.JSHandle != null) {
-			m.JSHandle.asyncCall("changeFontFamily", _fontFamily);
+		if (this.m.JSHandle != null) {
+			this.m.JSHandle.asyncCall("changeFontFamily", _fontFamily);
 		}
 	}
 
 	q.changeFontSize <- function (_fontSize) {
-		if (m.JSHandle != null) {
-			m.JSHandle.asyncCall("changeFontSize", _fontSize);
+		if (this.m.JSHandle != null) {
+			this.m.JSHandle.asyncCall("changeFontSize", _fontSize);
 		}
 	}
 
 	q.setVisibility <- function (_visible) {
-		if (m.JSHandle != null) {
-			m.JSHandle.asyncCall("setVisibility", _visible);
+		if (this.m.JSHandle != null) {
+			this.m.JSHandle.asyncCall("setVisibility", _visible);
 		}
 	}
 
@@ -55,17 +55,17 @@
 		if (new_text == ::ModBetterLegendsCombatLog.Log.DamageBuffered) {
 			if (!::ModBetterLegendsCombatLog.Log.damageTimerScheduled) {
 				::ModBetterLegendsCombatLog.Log.damageTimerScheduled = true;
-				Time.scheduleEvent(TimeUnit.Real, 50, function (_jsHandle) {
+				::Time.scheduleEvent(::TimeUnit.Real, 50, function (_jsHandle) {
 					::ModBetterLegendsCombatLog.Log.flushDamageBuffer(_jsHandle);
-				}, m.JSHandle);
+				}, this.m.JSHandle);
 			}
 			return;
 		}
 		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
 			return;
 		}
-		::ModBetterLegendsCombatLog.Log.flushDamageBuffer(m.JSHandle);
-		m.JSHandle.asyncCall("log", new_text);
+		::ModBetterLegendsCombatLog.Log.flushDamageBuffer(this.m.JSHandle);
+		this.m.JSHandle.asyncCall("log", new_text);
 	}
 
 	q.logEx = @(__original) function (_text) {
@@ -77,16 +77,16 @@
 		if (new_text == ::ModBetterLegendsCombatLog.Log.DamageBuffered) {
 			if (!::ModBetterLegendsCombatLog.Log.damageTimerScheduled) {
 				::ModBetterLegendsCombatLog.Log.damageTimerScheduled = true;
-				Time.scheduleEvent(TimeUnit.Real, 50, function (_jsHandle) {
+				::Time.scheduleEvent(::TimeUnit.Real, 50, function (_jsHandle) {
 					::ModBetterLegendsCombatLog.Log.flushDamageBuffer(_jsHandle);
-				}, m.JSHandle);
+				}, this.m.JSHandle);
 			}
 			return;
 		}
 		if (new_text == ::ModBetterLegendsCombatLog.Log.SuppressOutput) {
 			return;
 		}
-		::ModBetterLegendsCombatLog.Log.flushDamageBuffer(m.JSHandle);
+		::ModBetterLegendsCombatLog.Log.flushDamageBuffer(this.m.JSHandle);
 		__original(new_text);
 	}
 
