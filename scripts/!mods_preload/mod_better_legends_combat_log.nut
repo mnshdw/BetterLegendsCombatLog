@@ -1,7 +1,7 @@
 ::ModBetterLegendsCombatLog <- {
 	ID = "mod_better_legends_combat_log",
 	Name = "Better Legends Combat Log",
-	Version = "1.0.13",
+	Version = "1.0.14",
 	Enabled = true,
 	HideCombatLog = false,
 	FontFamily = "Fira",
