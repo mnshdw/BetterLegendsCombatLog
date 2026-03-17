@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.14] - 2026-03-17
+
+- Fix a bug that prevented the combat log from being hidden on combat start when the option was enabled.
+
 ## [1.0.13] - 2026-03-09
 
 - Add an option to completely hide the combat log. Enjoy the ultimate Battle Brothers experience in IMAX now!
